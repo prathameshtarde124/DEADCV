@@ -26,26 +26,79 @@ function playCursedBeep(freq = 440, type = 'square', duration = 0.08, vol = 0.05
   }
 }
 
-// ── CURSOR TRAIL EFFECT ─────────────────────────────────────
-const cursorDot = document.querySelector('.cursor-dot');
-if (cursorDot) {
+// ── CURSOR — weird editorial, inverts on hover ─────────────────
+const cursor = document.querySelector('.cursor') || document.querySelector('.cursor-dot');
+if (cursor) {
   let mouseX = window.innerWidth / 2;
   let mouseY = window.innerHeight / 2;
   let dotX = mouseX;
   let dotY = mouseY;
-
   window.addEventListener('mousemove', (e) => {
     mouseX = e.clientX;
     mouseY = e.clientY;
   });
-
   function renderCursor() {
-    dotX += (mouseX - dotX) * 0.3;
-    dotY += (mouseY - dotY) * 0.3;
-    cursorDot.style.transform = `translate(${dotX - 4}px, ${dotY - 4}px)`;
+    dotX += (mouseX - dotX) * 0.18;
+    dotY += (mouseY - dotY) * 0.18;
+    cursor.style.left = dotX + 'px';
+    cursor.style.top = dotY + 'px';
     requestAnimationFrame(renderCursor);
   }
   renderCursor();
+  // hover enlarges
+  document.addEventListener('mouseover', (e) => {
+    if (e.target.closest('a, button, .corpse, .pay__door, .evidence__card')) cursor.classList.add('hover');
+    else cursor.classList.remove('hover');
+  });
+}
+
+// ── MAGNETIC BUTTONS ──────────────────────────────────────────
+function initMagnetic() {
+  const magnets = document.querySelectorAll('[data-magnetic]');
+  magnets.forEach(btn => {
+    const inner = btn.querySelector('.btn-magnetic__inner') || btn;
+    btn.addEventListener('mousemove', (e) => {
+      const rect = btn.getBoundingClientRect();
+      const x = e.clientX - rect.left - rect.width / 2;
+      const y = e.clientY - rect.top - rect.height / 2;
+      inner.style.transform = `translate(${x * 0.18}px, ${y * 0.28}px)`;
+      btn.style.transform = `translate(${x * 0.06}px, ${y * 0.06}px)`;
+    });
+    btn.addEventListener('mouseleave', () => {
+      inner.style.transform = 'translate(0,0)';
+      btn.style.transform = 'translate(0,0)';
+    });
+  });
+}
+
+// ── HOVER TEXT SWAP — data-hover ──────────────────────────────
+function initHoverSwap() {
+  document.querySelectorAll('[data-hover]').forEach(el => {
+    const orig = el.textContent;
+    const hover = el.getAttribute('data-hover');
+    if (!hover || hover === orig) return;
+    el.addEventListener('mouseenter', () => {
+      el.textContent = hover;
+      el.style.letterSpacing = '-.04em';
+    });
+    el.addEventListener('mouseleave', () => {
+      el.textContent = orig;
+      el.style.letterSpacing = '';
+    });
+  });
+}
+
+// ── SCAN BAR — subtle auto ────────────────────────────────────
+function initScanBar() {
+  const bar = document.getElementById('hero-scan-bar');
+  const pct = document.getElementById('scan-pct');
+  if (!bar || !pct) return;
+  let v = 63;
+  setInterval(() => {
+    v = 62 + Math.floor(Math.random() * 6);
+    pct.textContent = v + '%';
+    bar.style.width = v + '%';
+  }, 1400);
 }
 
 // ── TERMINAL BOOT SEQUENCE (HOME VIEW) ──────────────────────
@@ -203,6 +256,9 @@ function renderCurrentRoute() {
   }
 
   bindSoundEffects();
+  initMagnetic();
+  initHoverSwap();
+  initScanBar();
   // Always keep global INR display in sync (hero, how, etc) if visible
   syncGlobalPrice();
 }
@@ -1630,4 +1686,7 @@ window.addEventListener('DOMContentLoaded', () => {
   initScoreCounter();
   initUploadEventListeners();
   bindSoundEffects();
+  initMagnetic();
+  initHoverSwap();
+  initScanBar();
 });
