@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DEADCV — your resume is probably shit</title>
+    <meta name="description" content="Upload your resume. Pay $1 — we'll tell you exactly what's wrong. In India $1 ≈ ₹88 via UPI. No account. No subscription. No bullshit." />
+    <meta name="keywords" content="resume roast, CV review, resume feedback, AI resume, resume score" />
+    <meta property="og:title" content="DEADCV — your resume is probably shit" />
+    <meta property="og:description" content="Upload it. Pay $1 — we'll tell you exactly what's wrong. In India $1 ≈ ₹88 via UPI." />
+    <meta property="og:type" content="website" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💀</text></svg>" />
+    <link rel="stylesheet" href="/src/style.css" />
+    <!-- Razorpay Checkout SDK -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  </head>
+  <body>
+    <!-- SCANLINES OVERLAY -->
+    <div class="scanlines" aria-hidden="true"></div>
+
+    <!-- CURSOR TRAIL -->
+    <div class="cursor-dot" aria-hidden="true"></div>
+
+    <!-- FLOATING RANDOM TEXT -->
+    <div class="floating-text ft-1" aria-hidden="true">best viewed while unemployed</div>
+    <div class="floating-text ft-2" aria-hidden="true">recruiter.exe has entered the chat</div>
+    <div class="floating-text ft-3" aria-hidden="true">emotional damage may occur</div>
+    <div class="floating-text ft-4" aria-hidden="true">please stop writing "passionate"</div>
+    <div class="floating-text ft-5" aria-hidden="true">probably shouldn't upload your CEO's resume</div>
+    <div class="floating-text ft-6" aria-hidden="true">visitor #69420 jk we don't track</div>
+    <div class="floating-text ft-7" aria-hidden="true">⚠️ side effects include self-awareness</div>
+
+    <!-- MAIN APP WRAPPER -->
+    <div id="app">
+      <!-- ── NAV ───────────────────────────────── -->
+      <nav class="nav" id="main-nav">
+        <div class="nav__logo">
+          <a href="/" class="nav__brand">
+            <span class="nav__skull">💀</span>
+            <span class="nav__name">DEADCV</span>
+          </a>
+          <span class="nav__version">v0.0.1</span>
+        </div>
+        <div class="nav__links">
+          <a href="/owner" class="nav__owner-link" title="Operator Room">[ operator ]</a>
+          <span class="nav__status">morgue_status: <span class="blink-red">ONLINE</span></span>
+          <a href="/upload" class="nav__cta" id="nav-cta">KILL MY CV</a>
+        </div>
+      </nav>
+
+      <!-- ═════════════════════════════════════════ -->
+      <!-- VIEW: HOME (LANDING PAGE)               -->
+      <!-- ═════════════════════════════════════════ -->
+      <main id="view-home" class="page-view">
+        <!-- HERO -->
+        <header class="hero" id="hero">
+          <div class="hero__warning-tape" aria-hidden="true">
+            <span>⚠ WARNING ⚠ WARNING ⚠ WARNING ⚠ WARNING ⚠ WARNING ⚠ WARNING ⚠ WARNING ⚠ WARNING ⚠ WARNING ⚠ WARNING ⚠ WARNING ⚠ WARNING ⚠ WARNING ⚠ WARNING ⚠ WARNING ⚠ WARNING ⚠ WARNING ⚠ WARNING ⚠</span>
+          </div>
+
+          <div class="hero__container">
+            <div class="hero__left">
+              <div class="hero__badge">[ CLASSIFIED ]</div>
+              <h1 class="hero__title" id="hero-title">
+                <span class="hero__line hero__line--1">YOUR RESUME</span>
+                <span class="hero__line hero__line--2">IS PROBABLY</span>
+                <span class="hero__line hero__line--3">SHIT<span class="hero__period">.</span></span>
+              </h1>
+              <p class="hero__subtitle">
+                Upload it. Pay <strong style="color:var(--yellow)">$1</strong> — we'll tell you exactly what's wrong.
+                <span id="hero-inr-note" style="color:var(--fg-dim); font-size:13px; display:block; margin-top:4px;">In India: $1 ≈ <span id="hero-inr-val">₹88</span> via UPI QR</span>
+              </p>
+              <a href="/upload" class="hero__cta" id="hero-cta">
+                <span class="hero__cta-fire">🔥</span>
+                <span>KILL MY CV</span>
+                <span class="hero__cta-arrow">→</span>
+              </a>
+              <div class="hero__fine-print">
+                <span>no account</span>
+                <span class="hero__dot">·</span>
+                <span>no subscription</span>
+                <span class="hero__dot">·</span>
+                <span>no bullshit</span>
+              </div>
+            </div>
+
+            <div class="hero__right">
+              <div class="terminal" id="hero-terminal">
+                <div class="terminal__bar">
+                  <span class="terminal__dot terminal__dot--red"></span>
+                  <span class="terminal__dot terminal__dot--yellow"></span>
+                  <span class="terminal__dot terminal__dot--green"></span>
+                  <span class="terminal__title">deadcv.exe</span>
+                </div>
+                <div class="terminal__body" id="terminal-body">
+                  <div class="terminal__line">&gt; booting deadcv...</div>
+                  <div class="terminal__line">&gt; loading recruiter...</div>
+                  <div class="terminal__line">&gt; scanning resume...</div>
+                  <div class="terminal__line terminal__line--error">&gt; status: concerning</div>
+                  <div class="terminal__line">&gt; _</div>
+                </div>
+              </div>
+              <div class="hero__ascii" aria-hidden="true">
+<pre>
+    ╔══════════════════╗
+    ║   R.I.P.         ║
+    ║   your resume    ║
+    ║   2024 - 2025    ║
+    ║   ┼              ║
+    ╚══════════════════╝
+</pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero__warning-tape hero__warning-tape--bottom" aria-hidden="true">
+            <span>⚠ CAUTION ⚠ CAUTION ⚠ CAUTION ⚠ CAUTION ⚠ CAUTION ⚠ CAUTION ⚠ CAUTION ⚠ CAUTION ⚠ CAUTION ⚠ CAUTION ⚠ CAUTION ⚠ CAUTION ⚠ CAUTION ⚠ CAUTION ⚠ CAUTION ⚠ CAUTION ⚠ CAUTION ⚠ CAUTION ⚠</span>
+          </div>
+        </header>
+
+        <!-- WHAT WE KILL -->
+        <section class="kill-section" id="what-we-kill">
+          <div class="section-header">
+            <span class="section-header__bracket">[</span>
+            <h2 class="section-header__title">WHAT WE KILL</h2>
+            <span class="section-header__bracket">]</span>
+          </div>
+          <p class="section-subtext">things on your resume that make recruiters close the tab</p>
+          <div class="kill-grid">
+            <div class="kill-card" data-index="01">
+              <span class="kill-card__x">✕</span>
+              <span class="kill-card__label">buzzwords</span>
+              <span class="kill-card__detail">"synergized cross-functional deliverables"</span>
+            </div>
+            <div class="kill-card" data-index="02">
+              <span class="kill-card__x">✕</span>
+              <span class="kill-card__label">useless objectives</span>
+              <span class="kill-card__detail">"seeking a challenging role to leverage my skills"</span>
+            </div>
+            <div class="kill-card" data-index="03">
+              <span class="kill-card__x">✕</span>
+              <span class="kill-card__label">weak bullets</span>
+              <span class="kill-card__detail">"responsible for managing things"</span>
+            </div>
+            <div class="kill-card" data-index="04">
+              <span class="kill-card__x">✕</span>
+              <span class="kill-card__label">fake achievements</span>
+              <span class="kill-card__detail">"improved efficiency by an unspecified amount"</span>
+            </div>
+            <div class="kill-card" data-index="05">
+              <span class="kill-card__x">✕</span>
+              <span class="kill-card__label">skill bars</span>
+              <span class="kill-card__detail">████████░░ 80% javascript lmao</span>
+            </div>
+            <div class="kill-card" data-index="06">
+              <span class="kill-card__x">✕</span>
+              <span class="kill-card__label">4-page resumes</span>
+              <span class="kill-card__detail">nobody is reading page 3, bro</span>
+            </div>
+            <div class="kill-card" data-index="07">
+              <span class="kill-card__x">✕</span>
+              <span class="kill-card__label">"hardworking team player"</span>
+              <span class="kill-card__detail">said everyone, ever, always</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- HOW IT WORKS -->
+        <section class="how-section" id="how-it-works">
+          <div class="section-header">
+            <span class="section-header__bracket">[</span>
+            <h2 class="section-header__title">HOW IT WORKS</h2>
+            <span class="section-header__bracket">]</span>
+          </div>
+          <p class="section-subtext">it's not complicated, we just made it look complicated</p>
+          <div class="how-steps">
+            <div class="how-step">
+              <div class="how-step__number">01</div>
+              <div class="how-step__pipe">│</div>
+              <div class="how-step__content">
+                <div class="how-step__title">UPLOAD CV</div>
+                <div class="how-step__desc">drag, drop, cry</div>
+              </div>
+            </div>
+            <div class="how-step">
+              <div class="how-step__number">02</div>
+              <div class="how-step__pipe">│</div>
+              <div class="how-step__content">
+                <div class="how-step__title">PAY $1</div>
+                <div class="how-step__desc">less than your morning coffee <span style="color:var(--fg-dim)">· in India ≈ <span class="inr-equiv" data-fallback="₹88">₹88</span> via UPI</span></div>
+              </div>
+            </div>
+            <div class="how-step">
+              <div class="how-step__number">03</div>
+              <div class="how-step__pipe">│</div>
+              <div class="how-step__content">
+                <div class="how-step__title">WE DESTROY IT</div>
+                <div class="how-step__desc">with love (and AI)</div>
+              </div>
+            </div>
+            <div class="how-step">
+              <div class="how-step__number">04</div>
+              <div class="how-step__pipe">│</div>
+              <div class="how-step__content">
+                <div class="how-step__title">WE REBUILD IT</div>
+                <div class="how-step__desc">actionable fixes, not motivational quotes</div>
+              </div>
+            </div>
+          </div>
+          <div class="how-cta-row">
+            <a href="/upload" class="how-cta" id="how-cta">[ KILL MY CV → ]</a>
+            <span class="how-price">just $1 · one time · no subscription trap <span style="color:var(--fg-dimmer)">· in India $1 ≈ <span class="inr-equiv" data-fallback="₹88">₹88</span> via UPI</span></span>
+          </div>
+        </section>
+
+        <!-- FAKE REPORT -->
+        <section class="report-section" id="sample-report">
+          <div class="section-header">
+            <span class="section-header__bracket">[</span>
+            <h2 class="section-header__title">SAMPLE REPORT</h2>
+            <span class="section-header__bracket">]</span>
+          </div>
+          <p class="section-subtext">this is what you'll get (except yours will be about you)</p>
+
+          <div class="report" id="fake-report">
+            <div class="report__header">
+              <div class="report__logo">💀 DEADCV REPORT</div>
+              <div class="report__id">RPT-00042069</div>
+            </div>
+            <div class="report__divider">════════════════════════════════════════</div>
+
+            <div class="report__row">
+              <span class="report__label">STATUS:</span>
+              <span class="report__value report__value--dead">DECEASED ☠️</span>
+            </div>
+            <div class="report__row">
+              <span class="report__label">SCORE:</span>
+              <span class="report__value">
+                <span class="report__score" id="report-score">63</span>/100
+              </span>
+            </div>
+
+            <div class="report__divider">────────────────────────────────────────</div>
+
+            <div class="report__row">
+              <span class="report__label">CAUSE OF DEATH:</span>
+              <span class="report__value report__value--warn">zero measurable impact</span>
+            </div>
+            <div class="report__row">
+              <span class="report__label">BUZZWORDS:</span>
+              <span class="report__value">17 <span class="report__note">(yikes)</span></span>
+            </div>
+            <div class="report__row">
+              <span class="report__label">WEAK BULLETS:</span>
+              <span class="report__value">6 <span class="report__note">(of 9 total)</span></span>
+            </div>
+            <div class="report__row">
+              <span class="report__label">ATS ESTIMATE:</span>
+              <span class="report__value">71% <span class="report__note">(borderline)</span></span>
+            </div>
+            <div class="report__row">
+              <span class="report__label">VIBE CHECK:</span>
+              <span class="report__value report__value--warn">corporate copypasta</span>
+            </div>
+
+            <div class="report__divider">════════════════════════════════════════</div>
+
+            <div class="report__footer">
+              <span>[ FULL REPORT INCLUDES REWRITE SUGGESTIONS ]</span>
+            </div>
+            <div class="report__action">
+              <a href="/upload" class="report__cta" id="report-cta">GET YOUR REAL REPORT →</a>
+            </div>
+          </div>
+        </section>
+
+        <!-- TESTIMONIALS / GRAVEYARD -->
+        <section class="graveyard-section" id="graveyard">
+          <div class="section-header">
+            <span class="section-header__bracket">[</span>
+            <h2 class="section-header__title">THE GRAVEYARD</h2>
+            <span class="section-header__bracket">]</span>
+          </div>
+          <p class="section-subtext">resumes that didn't make it</p>
+
+          <div class="tombstones">
+            <div class="tombstone">
+              <pre class="tombstone__art">
+  ┌─────────────┐
+  │   R.I.P.    │
+  │  resume.pdf │
+  │  2023-2025  │
+  │      ┼      │
+  └─────────────┘
+              </pre>
+              <p class="tombstone__cause">cause: "proficient in Microsoft Word"</p>
+            </div>
+            <div class="tombstone">
+              <pre class="tombstone__art">
+  ┌─────────────┐
+  │   R.I.P.    │
+  │  CV_v27.pdf │
+  │  2024-2025  │
+  │      ┼      │
+  └─────────────┘
+              </pre>
+              <p class="tombstone__cause">cause: 4 pages, 0 impact</p>
+            </div>
+            <div class="tombstone">
+              <pre class="tombstone__art">
+  ┌─────────────┐
+  │   R.I.P.    │
+  │  final.docx │
+  │  2022-2025  │
+  │      ┼      │
+  └─────────────┘
+              </pre>
+              <p class="tombstone__cause">cause: objective statement in 2025</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- FINAL CTA -->
+        <section class="final-cta-section" id="final-cta">
+          <div class="final-cta__box">
+            <div class="final-cta__warning">⚠ LAST CHANCE ⚠</div>
+            <p class="final-cta__text">
+              your resume is out there right now.<br />
+              recruiters are judging it.<br />
+              <strong>you just don't know what they're thinking.</strong>
+            </p>
+            <p class="final-cta__price">$1. that's it. <span style="font-size:14px; color:var(--fg-dim); font-weight:400; letter-spacing:1px;">· in India $1 ≈ <span class="inr-equiv" data-fallback="₹88">₹88</span> via UPI</span></p>
+            <a href="/upload" class="final-cta__btn" id="final-cta-btn">
+              🔥 KILL MY CV →
+            </a>
+            <p class="final-cta__sub">
+              takes 2 minutes · no account needed · results in your inbox
+            </p>
+          </div>
+        </section>
+      </main>
+
+      <!-- ═════════════════════════════════════════ -->
+      <!-- VIEW: UPLOAD PAGE (/upload)              -->
+      <!-- ═════════════════════════════════════════ -->
+      <main id="view-upload" class="page-view" style="display: none;">
+        <div class="upload-page-container">
+          <!-- TOP HEADER -->
+          <div class="upload-page-header">
+            <a href="/" class="back-link">← [ ESC / BACK TO SAFETY ]</a>
+            <div class="upload-breadcrumb">DEADCV / UPLOAD</div>
+            <h1 class="upload-header-title">okay.</h1>
+            <p class="upload-header-tagline">give us the body.</p>
+          </div>
+
+          <!-- ERROR BANNER (SHOWN ON FAILURE) -->
+          <div class="cursed-error-banner" id="upload-error-banner" style="display: none;">
+            <span class="error-skull">☠️</span>
+            <div class="error-content">
+              <span class="error-title">MORTE REJECTION:</span>
+              <span class="error-msg" id="upload-error-text">this corpse is unreadable.</span>
+            </div>
+          </div>
+
+          <!-- BIG UGLY-BUT-COOL UPLOAD BOX -->
+          <div class="morgue-drop-box" id="morgue-drop-box">
+            <div class="morgue-box-border">
+              <pre class="morgue-ascii-top">
+┌─────────────────────────────────────────────────────────────┐
+│                                                             │</pre>
+              <div class="morgue-box-center">
+                <div class="morgue-callout">DROP YOUR RESUME HERE</div>
+                <div class="morgue-formats">PDF / DOCX</div>
+                <div class="morgue-limits">MAXIMUM 10 MB</div>
+                <button type="button" class="morgue-choose-btn" id="btn-choose-file">
+                  [ CHOOSE FILE ]
+                </button>
+                <input type="file" id="file-input-hidden" accept=".pdf,.docx,.doc" style="display: none;" />
+              </div>
+              <pre class="morgue-ascii-bottom">
+│                                                             │
+└─────────────────────────────────────────────────────────────┘</pre>
+            </div>
+          </div>
+
+          <!-- AFTER UPLOAD / FILE SELECTED SECTION -->
+          <div class="file-found-section" id="file-found-section" style="display: none;">
+            <div class="file-found-card">
+              <div class="file-found-header">
+                <span class="blink-red">●</span> FILE FOUND
+              </div>
+              <div class="file-found-details">
+                <div class="found-row">
+                  <span class="found-label">filename:</span>
+                  <span class="found-val" id="found-filename">resume.pdf</span>
+                </div>
+                <div class="found-row">
+                  <span class="found-label">size:</span>
+                  <span class="found-val" id="found-filesize">482kb</span>
+                </div>
+                <div class="found-row">
+                  <span class="found-label">status:</span>
+                  <span class="found-val found-val--green" id="found-status">readable</span>
+                </div>
+              </div>
+              <button type="button" class="change-file-btn" id="btn-change-file">
+                [ choose another corpse ]
+              </button>
+            </div>
+
+            <!-- QUESTIONS FORM -->
+            <form id="upload-form" class="morgue-form">
+              <div class="form-group">
+                <label class="form-label" for="target-job-input">
+                  <span class="label-arrow">&gt;</span> WHAT ARE YOU TRYING TO GET HIRED FOR?
+                </label>
+                <input
+                  type="text"
+                  id="target-job-input"
+                  name="targetJob"
+                  class="morgue-input"
+                  placeholder="Software Engineer Intern"
+                  required
+                />
+                <span class="input-hint">e.g. Senior Frontend Engineer, Product Designer, Janitor</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="job-desc-input">
+                  <span class="label-arrow">&gt;</span> PASTE JOB DESCRIPTION <span class="optional-tag">(OPTIONAL)</span>
+                </label>
+                <textarea
+                  id="job-desc-input"
+                  name="jobDescription"
+                  class="morgue-textarea"
+                  rows="6"
+                  placeholder="Paste the job description here if you want us to compare your resume against recruiter expectations..."
+                ></textarea>
+                <span class="input-hint">more context = more accurate roasting</span>
+              </div>
+
+              <!-- ROAST INTENSITY SELECTOR -->
+              <div class="form-group">
+                <label class="form-label">
+                  <span class="label-arrow">&gt;</span> HOW MUCH DAMAGE?
+                </label>
+                <div class="intensity-selector">
+                  <label class="intensity-option">
+                    <input type="radio" name="roastIntensity" value="Light" />
+                    <span class="intensity-btn">🫠 Light</span>
+                  </label>
+                  <label class="intensity-option">
+                    <input type="radio" name="roastIntensity" value="Brutal" checked />
+                    <span class="intensity-btn">🔥 Brutal</span>
+                  </label>
+                  <label class="intensity-option">
+                    <input type="radio" name="roastIntensity" value="Unhinged" />
+                    <span class="intensity-btn">💀 Unhinged</span>
+                  </label>
+                </div>
+                <span class="input-hint">Unhinged mode is at your own psychological risk.</span>
+              </div>
+
+              <!-- ACTION ROW -->
+              <div class="form-actions">
+                <button type="submit" class="morgue-submit-btn" id="btn-submit-morgue">
+                  <span class="btn-fire">🔥</span>
+                  <span>SEND THIS THING TO THE MORGUE →</span>
+                </button>
+                <div class="morgue-price-tag">
+                  <span class="price-val">$1</span>
+                  <span class="price-sub">one-time · in India ≈ <span class="inr-equiv" data-fallback="₹88">₹88</span> via UPI</span>
+                </div>
+              </div>
+
+              <!-- PROCESSING SPINNER -->
+              <div class="morgue-loader" id="morgue-loader" style="display: none;">
+                <div class="loader-terminal">
+                  <div class="loader-line">&gt; extracting resume text from corpse...</div>
+                  <div class="loader-line">&gt; auditing buzzword density...</div>
+                  <div class="loader-line">&gt; generating unique order ID...</div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </main>
+
+      <!-- ═════════════════════════════════════════ -->
+      <!-- VIEW: PAYMENT PAGE (/payment)            -->
+      <!-- ═════════════════════════════════════════ -->
+      <main id="view-payment" class="page-view" style="display: none;">
+        <div class="pay2-page">
+
+          <!-- ── HERO HEADER ──────────────────────────────────────── -->
+          <div class="pay2-hero">
+            <div class="pay2-hero__tag">DEADCV / CHECKOUT</div>
+            <h1 class="pay2-hero__title">READY TO GET<br><span class="pay2-hero__cooked">COOKED?</span> 💀</h1>
+            <p class="pay2-hero__sub">One resume. One roast.</p>
+            <div class="pay2-hero__meta">
+              <span class="pay2-hero__orderid-label">ORDER</span>
+              <span class="pay2-hero__orderid" id="pay2-order-id">DEAD-XXXXX</span>
+            </div>
+          </div>
+
+          <!-- ── GLOBAL INIT STATE (loading / error) ──────────────── -->
+          <div id="pay2-init-loading" class="pay2-init-state">
+            <div class="pay2-spinner"></div>
+            <span>&gt; preparing payment terminal...</span>
+          </div>
+          <div id="pay2-init-error" class="pay2-init-state pay2-init-state--error" style="display:none;">
+            <span class="pay2-init-error-icon">⚠</span>
+            <p>Payment not configured. Add <code>RAZORPAY_KEY_ID</code> to <code>.env</code> and restart.</p>
+          </div>
+
+          <!-- ── TWO DOORS ─────────────────────────────────────────── -->
+          <div class="pay2-doors" id="pay2-doors" style="display:none;">
+
+            <!-- ════════════════════════════════ -->
+            <!-- DOOR 1 — INTERNATIONAL / RAZORPAY -->
+            <!-- ════════════════════════════════ -->
+            <div class="pay2-door pay2-door--intl" id="door-intl">
+              <div class="pay2-door__eyebrow">🌎 PAY FROM ANYWHERE</div>
+              <div class="pay2-door__price" id="intl-price-display">$1</div>
+              <div class="pay2-door__price-sub">USD · one-time</div>
+
+              <ul class="pay2-door__methods" id="intl-methods-list">
+                <li>Visa / Mastercard / Amex</li>
+                <li>Apple Pay <span class="pay2-method-note">(where eligible)</span></li>
+                <li>Google Pay <span class="pay2-method-note">(where eligible)</span></li>
+              </ul>
+
+              <!-- Intl available: pay button -->
+              <div id="intl-available" style="display:none;">
+                <button id="btn-pay-intl" class="pay2-door__cta pay2-door__cta--intl">
+                  <span id="btn-intl-label">PAY $1 &amp; GET COOKED →</span>
+                </button>
+                <div class="pay2-door__trust">
+                  <span>🔒 Secured by Razorpay</span>
+                </div>
+              </div>
+
+              <!-- Intl not yet enabled -->
+              <div id="intl-unavailable" style="display:none;">
+                <div class="pay2-door__notice pay2-door__notice--warn">
+                  International payments are currently unavailable.<br>
+                  <span class="pay2-door__notice-sub">Indian users — use UPI on the right.</span>
+                </div>
+              </div>
+
+              <!-- After Razorpay: verifying state -->
+              <div id="intl-verifying" style="display:none;">
+                <div class="pay2-door__verifying">
+                  <div class="pay2-spinner pay2-spinner--sm"></div>
+                  <strong>PAYMENT CONFIRMED.</strong>
+                  <span>okay bro. the resume is entering the morgue.</span>
+                  <span class="pay2-door__hint">&gt; confirming on our end...</span>
+                </div>
+              </div>
+
+              <!-- After Razorpay: failed -->
+              <div id="intl-failed" style="display:none;">
+                <div class="pay2-door__fail">
+                  <p>payment didn't go through.<br><span>your resume survives... for now.</span></p>
+                  <button id="btn-intl-retry" class="pay2-door__cta pay2-door__cta--retry">TRY AGAIN</button>
+                </div>
+              </div>
+
+              <!-- After Razorpay: cancelled -->
+              <div id="intl-cancelled" style="display:none;">
+                <div class="pay2-door__fail">
+                  <p>you escaped.<br><span>unfortunately, your resume is still waiting.</span></p>
+                  <button id="btn-intl-cancelled-pay" class="pay2-door__cta pay2-door__cta--intl">PAY &amp; GET COOKED →</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- ════════════════════════════════ -->
+            <!-- DOOR DIVIDER                     -->
+            <!-- ════════════════════════════════ -->
+            <div class="pay2-divider" aria-hidden="true">
+              <span class="pay2-divider__line"></span>
+              <span class="pay2-divider__or">OR</span>
+              <span class="pay2-divider__line"></span>
+            </div>
+
+            <!-- ════════════════════════════════ -->
+            <!-- DOOR 2 — INDIA / UPI QR          -->
+            <!-- ════════════════════════════════ -->
+            <div class="pay2-door pay2-door--upi" id="door-upi">
+              <div class="pay2-door__eyebrow">🇮🇳 PAY WITH UPI — INDIA</div>
+              <div class="pay2-door__price" id="upi-price-display">₹88</div>
+              <div class="pay2-door__price-sub">$1 ≈ <span id="upi-inr-note">₹88</span> · one-time · UPI QR</div>
+
+              <!-- QR — untouched image, white background for scanability -->
+              <div id="upi-qr-section">
+                <div class="pay2-qr-frame">
+                  <div class="pay2-qr-corner pay2-qr-corner--tl"></div>
+                  <div class="pay2-qr-corner pay2-qr-corner--tr"></div>
+                  <div class="pay2-qr-corner pay2-qr-corner--bl"></div>
+                  <div class="pay2-qr-corner pay2-qr-corner--br"></div>
+                  <div class="pay2-qr-inner">
+                    <img
+                      src="/payment/upi-qr.png"
+                      alt="UPI QR code — scan with any UPI app to pay"
+                      class="pay2-qr-img"
+                      draggable="false"
+                    />
+                  </div>
+                </div>
+                <p class="pay2-qr-instruction">Scan with any UPI app</p>
+              </div>
+
+              <!-- UTR submission — shown after QR -->
+              <div id="upi-utr-section" class="pay2-utr-section">
+                <label class="pay2-utr-label" for="utr-input">
+                  Paid? Enter your UTR below.
+                </label>
+                <div class="pay2-utr-row">
+                  <input
+                    type="text"
+                    id="utr-input"
+                    class="pay2-utr-input"
+                    placeholder="UPI Transaction ID / UTR"
+                    maxlength="64"
+                    autocomplete="off"
+                    autocorrect="off"
+                    spellcheck="false"
+                  />
+                  <button id="btn-submit-utr" class="pay2-door__cta pay2-door__cta--upi">
+                    I PAID →
+                  </button>
+                </div>
+                <div id="utr-error" class="pay2-utr-error" style="display:none;"></div>
+              </div>
+
+              <!-- After UTR submit: waiting state -->
+              <div id="upi-waiting" class="pay2-utr-waiting" style="display:none;">
+                <div class="pay2-utr-waiting__icon">⏳</div>
+                <strong>UTR received.</strong>
+                <span>Hang tight — we verify every payment manually.</span>
+                <span class="pay2-door__hint">&gt; you'll move to /processing automatically once confirmed.</span>
+              </div>
+            </div>
+
+          </div><!-- /pay2-doors -->
+
+          <div class="pay2-legal">
+            <a href="/terms">Terms</a> ·
+            <a href="/privacy">Privacy</a> ·
+            <a href="/refund">Refund</a> ·
+            <a href="/contact">Contact</a>
+          </div>
+
+        </div><!-- /pay2-page -->
+      </main>
+
+      <!-- ═════════════════════════════════════════ -->
+      <!-- VIEW: WAITING PAGE (/waiting)            -->
+      <!-- ═════════════════════════════════════════ -->
+      <main id="view-waiting" class="page-view" style="display: none;">
+        <div class="waiting-page-container">
+          <div class="waiting-card">
+            <div class="waiting-badge">DEADCV / PAYMENT</div>
+
+            <div class="waiting-radar">
+              <span class="radar-dot blink-red"></span>
+              <span class="radar-ring"></span>
+            </div>
+
+            <div class="waiting-status-label">payment status:</div>
+            <div class="waiting-status-val" id="waiting-status-text">
+              PENDING VERIFICATION
+            </div>
+
+            <div class="waiting-order-box">
+              <span class="waiting-order-label">order:</span>
+              <span class="waiting-order-id" id="waiting-order-id">DEAD-XXXXX</span>
+            </div>
+
+            <div class="waiting-text-block">
+              <p class="waiting-quote">&gt; payment verification is currently powered by a human with a phone.</p>
+              <p class="waiting-subquote">&gt; once verified, your resume enters the morgue.</p>
+            </div>
+
+            <div class="waiting-live-pulse" id="waiting-pulse-status">
+              &gt; operator is verifying bank logs... (checking status every 3s)
+            </div>
+
+            <div class="waiting-details-table">
+              <div class="w-row">
+                <span>TARGET ROLE:</span>
+                <span id="waiting-target-role" class="w-val">Software Engineer</span>
+              </div>
+              <div class="w-row">
+                <span>UTR SUBMITTED:</span>
+                <span id="waiting-utr-val" class="w-val w-val--yellow">XXXXXXXXXXXX</span>
+              </div>
+              <div class="w-row">
+                <span>TIME LOGGED:</span>
+                <span id="waiting-time-val" class="w-val">Just now</span>
+              </div>
+            </div>
+
+            <div class="waiting-rejection-msg" id="waiting-rejection-msg" style="display: none;">
+              <span class="rej-title">☠️ PAYMENT REJECTED</span>
+              <p id="waiting-rej-reason">UTR could not be verified in bank ledger.</p>
+              <a href="/payment" class="rej-retry-btn" id="rej-retry-btn">← TRY PAYMENT AGAIN</a>
+            </div>
+
+            <div class="waiting-operator-hint">
+              <span>Are you the owner testing this?</span>
+              <a href="/owner" class="operator-quick-link">[ Open Operator Verification Room → ]</a>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <!-- ═════════════════════════════════════════ -->
+      <!-- VIEW: PROCESSING PAGE (/processing)      -->
+      <!-- ═════════════════════════════════════════ -->
+      <main id="view-processing" class="page-view" style="display: none;">
+        <div class="processing-page-container">
+          <div class="processing-card">
+            <div class="proc-tag">DEADCV / MORGUE</div>
+            <h1 class="proc-title">PAYMENT CONFIRMED.</h1>
+            <p class="proc-sub">okay bro.</p>
+            <p class="proc-sub proc-sub--dim">the resume is officially entering the morgue.</p>
+
+            <div class="processing-terminal">
+              <div class="proc-line">&gt; payment verified by server</div>
+              <div class="proc-line">&gt; loading AI autopsy algorithms...</div>
+              <div class="proc-line proc-line--highlight" id="proc-active-step">&gt; scanning buzzword density...</div>
+            </div>
+
+            <div class="proc-loading-bar">
+              <div class="proc-loading-progress" id="proc-progress"></div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <!-- ═════════════════════════════════════════ -->
+      <!-- VIEW: CORE RESULT & ROAST CARD (/result)  -->
+      <!-- ═════════════════════════════════════════ -->
+      <main id="view-result" class="page-view" style="display: none;">
+        <div class="result-page-container">
+          
+          <!-- DRAMATIC CORE HEADER -->
+          <div class="result-hero">
+            <div class="result-brand-tag">DEADCV 💀</div>
+            <div class="result-headline-sub">YOUR RESUME IS</div>
+
+            <!-- ASCII PROGRESS BAR -->
+            <div class="result-ascii-bar" id="result-ascii-bar">
+              <div>████████████████</div>
+              <div>████████████░░░░</div>
+              <div>████████████░░░░</div>
+            </div>
+
+            <!-- DEAD PERCENTAGE -->
+            <div class="result-dead-stat">
+              <span class="dead-num" id="result-dead-pct">73%</span>
+              <span class="dead-label">DEAD 💀</span>
+            </div>
+
+            <div class="result-cause-block">
+              <span class="cause-prefix">&gt; cause of death:</span>
+              <h2 class="cause-title" id="result-cause-of-death">NO MEASURABLE IMPACT</h2>
+            </div>
+          </div>
+
+          <!-- ═════════════════════════════════════ -->
+          <!-- PRIMARY SCREENSHOT CARD              -->
+          <!-- ═════════════════════════════════════ -->
+          <div class="share-card-container">
+            <div class="roast-share-card" id="roast-share-card">
+              <div class="card-border-art">
+                <div class="card-ascii-top">┌────────────────────────────────────────────────────────┐</div>
+                
+                <div class="card-inner-content">
+                  <div class="card-skull-logo">DEADCV 💀</div>
+                  <div class="card-sub-header">YOUR RESUME IS</div>
+                  <div class="card-score-banner" id="card-score-banner">73% DEAD</div>
+
+                  <div class="card-death-row">
+                    <span class="card-row-lbl">CAUSE OF DEATH</span>
+                    <span class="card-row-val" id="card-cause-val">"PASSIONATE ABOUT TECHNOLOGY" used 4 times.</span>
+                  </div>
+
+                  <div class="card-stats-grid">
+                    <div class="card-stat-item">
+                      <span class="stat-lbl">BUZZWORDS</span>
+                      <span class="stat-num" id="card-stat-buzzwords">17</span>
+                    </div>
+                    <div class="card-stat-item">
+                      <span class="stat-lbl">WEAK BULLETS</span>
+                      <span class="stat-num" id="card-stat-bullets">6</span>
+                    </div>
+                    <div class="card-stat-item">
+                      <span class="stat-lbl">ACTUAL IMPACT</span>
+                      <span class="stat-num" id="card-stat-impact">2%</span>
+                    </div>
+                    <div class="card-stat-item">
+                      <span class="stat-lbl">RECRUITER SURVIVAL</span>
+                      <span class="stat-num" id="card-stat-survival">38%</span>
+                    </div>
+                    <div class="card-stat-item card-stat-item--wide">
+                      <span class="stat-lbl">PERSONALITY:</span>
+                      <span class="stat-str" id="card-stat-personality">LinkedIn corporate NPC</span>
+                    </div>
+                    <div class="card-stat-item card-stat-item--wide">
+                      <span class="stat-lbl">RESUME SPECIES:</span>
+                      <span class="stat-str" id="card-stat-species">The "I did projects" type</span>
+                    </div>
+                    <div class="card-stat-item card-stat-item--wide">
+                      <span class="stat-lbl">MOST DANGEROUS WORD:</span>
+                      <span class="stat-str" id="card-stat-word">"Developed" (7 times)</span>
+                    </div>
+                    <div class="card-stat-item card-stat-item--wide">
+                      <span class="stat-lbl">ATS STATUS:</span>
+                      <span class="stat-str" id="card-stat-ats">Barely breathing</span>
+                    </div>
+                  </div>
+
+                  <div class="card-watermark">DEADCV.COM</div>
+                </div>
+
+                <div class="card-ascii-bottom">└────────────────────────────────────────────────────────┘</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═════════════════════════════════════ -->
+          <!-- SHARE HUB: "SHARE MY DEATH"          -->
+          <!-- ═════════════════════════════════════ -->
+          <div class="share-hub-section">
+            <h2 class="share-hub-title">📸 SHARE MY DEATH</h2>
+            <p class="share-hub-sub">expose your resume before a recruiter exposes you.</p>
+
+            <div class="share-buttons-grid">
+              <button class="share-btn share-btn--story" id="btn-download-story">
+                <span class="btn-icon">📱</span>
+                <span>DOWNLOAD STORY CARD (1080 × 1920)</span>
+              </button>
+
+              <button class="share-btn share-btn--post" id="btn-download-post">
+                <span class="btn-icon">🖼️</span>
+                <span>DOWNLOAD POST CARD (1080 × 1080)</span>
+              </button>
+
+              <button class="share-btn share-btn--whatsapp" id="btn-share-whatsapp">
+                <span class="btn-icon">💬</span>
+                <span>WHATSAPP</span>
+              </button>
+
+              <button class="share-btn share-btn--x" id="btn-share-x">
+                <span class="btn-icon">🐦</span>
+                <span>X / TWITTER</span>
+              </button>
+
+              <button class="share-btn share-btn--link" id="btn-copy-link">
+                <span class="btn-icon">🔗</span>
+                <span id="copy-link-text">COPY LINK</span>
+              </button>
+            </div>
+
+            <!-- COPY SHARE TEXT BOX -->
+            <div class="share-copy-box">
+              <div class="copy-box-top">
+                <span class="copy-box-lbl">&gt; READY-TO-POST VIRAL CAPTION:</span>
+                <button class="copy-caption-btn" id="btn-copy-caption">
+                  [ COPY SHARE TEXT ]
+                </button>
+              </div>
+              <textarea id="share-caption-textarea" class="share-caption-textarea" readonly rows="3"></textarea>
+            </div>
+          </div>
+
+          <!-- ═════════════════════════════════════ -->
+          <!-- THE ROAST: SPECIFIC OBSERVATIONS     -->
+          <!-- ═════════════════════════════════════ -->
+          <div class="roast-observations-section">
+            <div class="section-header">
+              <span class="section-header__bracket">[</span>
+              <h2 class="section-header__title">AUTOPSY OBSERVATIONS</h2>
+              <span class="section-header__bracket">]</span>
+            </div>
+
+            <div class="roast-items-list" id="roast-items-list">
+              <!-- Dynamically rendered -->
+            </div>
+
+            <!-- RECRUITER REACTION CALLOUT -->
+            <div class="recruiter-reaction-card">
+              <div class="reaction-tag">&gt; 5:00 PM RECRUITER REACTION:</div>
+              <p class="reaction-quote" id="roast-recruiter-reaction">“Okay... but what did you actually accomplish?”</p>
+            </div>
+
+            <!-- HIGHLIGHTS / LOWLIGHTS -->
+            <div class="roast-meta-grid">
+              <div class="meta-item-box meta-item-box--pos">
+                <span class="meta-tag">STRONGEST PART</span>
+                <p id="roast-strongest-part">Your name is spelled correctly.</p>
+              </div>
+              <div class="meta-item-box meta-item-box--neg">
+                <span class="meta-tag">BIGGEST WEAKNESS</span>
+                <p id="roast-biggest-weakness">Zero measurable impact. 14 technologies with zero results.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═════════════════════════════════════ -->
+          <!-- VIRAL NEXT-PERSON CTA                -->
+          <!-- ═════════════════════════════════════ -->
+          <div class="viral-challenge-box">
+            <span class="challenge-title">think yours can survive?</span>
+            <a href="/upload" class="challenge-btn" id="challenge-btn">
+              🔥 KILL MY CV →
+            </a>
+          </div>
+
+          <!-- ═════════════════════════════════════ -->
+          <!-- OPTIONAL: "FIX MY RESUME" ACCORDION   -->
+          <!-- ═════════════════════════════════════ -->
+          <div class="fix-resume-wrapper">
+            <div class="fix-prompt-box">
+              <p class="fix-prompt-line">&gt; okay.</p>
+              <p class="fix-prompt-line">&gt; we destroyed it.</p>
+              <p class="fix-prompt-line">&gt; want us to fix it?</p>
+              <button type="button" class="fix-resume-toggle-btn" id="btn-toggle-fix">
+                ⚡ [ FIX MY RESUME ]
+              </button>
+            </div>
+
+            <div class="fix-content-panel" id="fix-content-panel" style="display: none;">
+              <div class="fix-card">
+                <h3 class="fix-title">PRO RESUME FIX &amp; REWRITE</h3>
+                
+                <div class="fix-before-after">
+                  <div class="fix-col fix-col--bad">
+                    <span class="col-lbl">BEFORE (WEAK / VAGUE):</span>
+                    <p id="fix-before-text">"Worked on various projects."</p>
+                  </div>
+                  <div class="fix-col fix-col--good">
+                    <span class="col-lbl">AFTER (QUANTIFIABLE &amp; PUNCHY):</span>
+                    <p id="fix-after-text">"Engineered high-throughput service reducing query latency by 32% for 10K+ users."</p>
+                  </div>
+                </div>
+
+                <div class="fix-critique-box">
+                  <span class="critique-lbl">&gt; WHY THIS WORKS:</span>
+                  <p id="fix-critique-text">Adds clear ownership, measurable metrics, and eliminates filler words.</p>
+                </div>
+
+                <div class="fix-action-plan">
+                  <span class="plan-lbl">&gt; 3 IMMEDIATE ACTION STEPS:</span>
+                  <ul id="fix-action-list" class="fix-action-list">
+                    <li>Replace all "responsible for" with concrete percentage gains.</li>
+                    <li>Remove skill bar meters (80% CSS is meaningless).</li>
+                    <li>Condense bullet points to max 2 lines with action verb + metric.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </main>
+
+      <!-- ═════════════════════════════════════════ -->
+      <!-- VIEW: OWNER OPERATOR ROOM (/owner)   -->
+      <!-- ═════════════════════════════════════════ -->
+      <main id="view-owner" class="page-view" style="display: none;">
+        <div class="owner-page-container">
+          <div class="owner-header">
+            <div class="owner-tag">[ RESTRICTED AREA // OPERATOR ACCESS ONLY ]</div>
+            <h1 class="owner-title">DEADCV / MORGUE_OPERATOR</h1>
+            <p class="owner-sub">verify incoming $1 (≈ ₹88) UPI payments &amp; admit corpses to the roast queue.</p>
+          </div>
+
+          <!-- PIN AUTH GATE (if not unlocked) -->
+          <div id="owner-auth-box" class="owner-auth-box">
+            <div class="auth-card">
+              <div class="auth-title">ENTER OPERATOR SECRET</div>
+              <p class="auth-sub">Default secret is configured in .env (<code>deadcv666</code>)</p>
+              <form id="owner-auth-form" class="auth-form">
+                <input
+                  type="password"
+                  id="owner-secret-input"
+                  class="morgue-input"
+                  placeholder="operator secret..."
+                  value="deadcv666"
+                  required
+                />
+                <button type="submit" class="owner-auth-btn">UNLOCK MORGUE REGISTRY →</button>
+              </form>
+            </div>
+          </div>
+
+          <!-- ORDERS DASHBOARD (when unlocked) -->
+          <div id="owner-dashboard" class="owner-dashboard" style="display: none;">
+            <div class="dashboard-controls">
+              <div class="filter-group">
+                <span class="filter-label">STATUS FILTER:</span>
+                <button class="filter-btn active" data-filter="all">ALL</button>
+                <button class="filter-btn" data-filter="pending_verification">PENDING UTR</button>
+                <button class="filter-btn" data-filter="approved">APPROVED</button>
+                <button class="filter-btn" data-filter="rejected">REJECTED</button>
+              </div>
+              <button id="btn-refresh-orders" class="refresh-btn">⟳ REFRESH</button>
+            </div>
+
+            <div class="orders-table-wrapper">
+              <table class="morgue-table">
+                <thead>
+                  <tr>
+                    <th>ORDER ID</th>
+                    <th>TARGET ROLE</th>
+                    <th>FILE / WORDS</th>
+                    <th>UTR / TXN ID</th>
+                    <th>PAYMENT STATUS</th>
+                    <th>ACTIONS</th>
+                  </tr>
+                </thead>
+                <tbody id="owner-orders-tbody">
+                  <tr>
+                    <td colspan="6" class="table-loading">&gt; loading morgue records...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <!-- ═════════════════════════════════════════ -->
+      <!-- VIEW: TERMS & CONDITIONS (/terms)        -->
+      <!-- ═════════════════════════════════════════ -->
+      <main id="view-terms" class="page-view legal-page" style="display: none;">
+        <div class="legal-container">
+          <div class="legal-breadcrumb">DEADCV / TERMS</div>
+          <h1 class="legal-title">Terms &amp; Conditions</h1>
+          <p class="legal-updated">Last updated: August 2026</p>
+
+          <div class="legal-body">
+            <h2>1. The Service</h2>
+            <p>DEADCV is an AI-powered resume roasting and feedback service. You upload a resume, pay a one-time fee, and receive an AI-generated analysis. The output is for entertainment and educational purposes. It does not constitute professional career advice.</p>
+
+            <h2>2. Payment</h2>
+            <p>The global fee is <strong>$1 USD</strong> everywhere — one price, no tiers. In India, an approximate INR equivalent (≈ ₹88, updated via live USD→INR rate) is shown alongside $1 and a UPI QR is provided as an alternative to card checkout. This is a one-time, non-recurring payment. Payments are processed securely by Razorpay. DEADCV does not store your card details.</p>
+
+            <h2>3. No Guarantees</h2>
+            <p>We do not guarantee job interviews, employment outcomes, ATS scores, or recruiter responses. The roast is an opinion generated by an AI model. Treat it accordingly.</p>
+
+            <h2>4. Privacy</h2>
+            <p>We store the text extracted from your resume temporarily to generate the roast. We do not sell, share, or publish your personal data. See our <a href="/privacy">Privacy Policy</a> for details.</p>
+
+            <h2>5. Refunds</h2>
+            <p>See our <a href="/refund">Refund Policy</a>. Because the AI roast is delivered immediately upon payment, refunds are generally not available once the analysis has been generated.</p>
+
+            <h2>6. Acceptable Use</h2>
+            <p>Do not upload resumes that contain other people's personal information without their consent. Do not attempt to reverse-engineer or scrape the service.</p>
+
+            <h2>7. Governing Law</h2>
+            <p>These terms are governed by the laws of India.</p>
+
+            <h2>8. Contact</h2>
+            <p>Questions? <a href="/contact">Contact us</a>.</p>
+          </div>
+        </div>
+      </main>
+
+      <!-- ═════════════════════════════════════════ -->
+      <!-- VIEW: PRIVACY POLICY (/privacy)          -->
+      <!-- ═════════════════════════════════════════ -->
+      <main id="view-privacy" class="page-view legal-page" style="display: none;">
+        <div class="legal-container">
+          <div class="legal-breadcrumb">DEADCV / PRIVACY</div>
+          <h1 class="legal-title">Privacy Policy</h1>
+          <p class="legal-updated">Last updated: August 2026</p>
+
+          <div class="legal-body">
+            <h2>What We Collect</h2>
+            <p>When you upload a resume, we extract and store the text content to generate the roast. We also store your target job description and a unique order ID tied to your payment.</p>
+
+            <h2>What We Do NOT Collect</h2>
+            <ul>
+              <li>We do not collect your name, email, or contact details unless you contact us directly.</li>
+              <li>We do not store your card number, CVV, or full payment credentials. Razorpay handles all card data.</li>
+              <li>We do not use tracking cookies or ad trackers.</li>
+            </ul>
+
+            <h2>How We Use Your Data</h2>
+            <p>Your resume text is used solely to generate your personalised roast. We do not sell, share, or publish it. The roast result is stored against your order ID so you can retrieve it.</p>
+
+            <h2>Data Retention</h2>
+            <p>Order records are retained for operational purposes. Uploaded resume files are stored temporarily. You may request deletion by contacting us.</p>
+
+            <h2>Third Parties</h2>
+            <ul>
+              <li><strong>Razorpay</strong> — processes payments. Subject to <a href="https://razorpay.com/privacy/" target="_blank" rel="noopener">Razorpay's Privacy Policy</a>.</li>
+              <li><strong>Google Gemini AI</strong> — powers the roast generation. Resume text is sent to the Gemini API.</li>
+            </ul>
+
+            <h2>Contact</h2>
+            <p>To request data deletion or for privacy questions, <a href="/contact">contact us</a>.</p>
+          </div>
+        </div>
+      </main>
+
+      <!-- ═════════════════════════════════════════ -->
+      <!-- VIEW: REFUND POLICY (/refund)            -->
+      <!-- ═════════════════════════════════════════ -->
+      <main id="view-refund" class="page-view legal-page" style="display: none;">
+        <div class="legal-container">
+          <div class="legal-breadcrumb">DEADCV / REFUND</div>
+          <h1 class="legal-title">Refund &amp; Cancellation Policy</h1>
+          <p class="legal-updated">Last updated: August 2026</p>
+
+          <div class="legal-body">
+            <h2>One-Time Digital Service</h2>
+            <p>DEADCV is a one-time digital service. Once your payment is confirmed and the AI roast is generated, the service has been delivered.</p>
+
+            <h2>Refund Eligibility</h2>
+            <p>Refunds are available in the following cases:</p>
+            <ul>
+              <li>Your payment was charged but the roast was never generated due to a technical failure on our side.</li>
+              <li>You were charged twice for the same order.</li>
+            </ul>
+            <p>Refunds are <strong>not</strong> available if:</p>
+            <ul>
+              <li>You received the roast but didn't like the feedback.</li>
+              <li>You uploaded someone else's resume by mistake.</li>
+            </ul>
+
+            <h2>How to Request a Refund</h2>
+            <p>Contact us at the email on our <a href="/contact">Contact page</a> with your Order ID and payment details. We'll review and respond within 2 business days.</p>
+
+            <h2>Cancellation</h2>
+            <p>If you initiate a payment but cancel before completing it, you are not charged. No cancellation fee applies.</p>
+          </div>
+        </div>
+      </main>
+
+      <!-- ═════════════════════════════════════════ -->
+      <!-- VIEW: CONTACT (/contact)                 -->
+      <!-- ═════════════════════════════════════════ -->
+      <main id="view-contact" class="page-view legal-page" style="display: none;">
+        <div class="legal-container">
+          <div class="legal-breadcrumb">DEADCV / CONTACT</div>
+          <h1 class="legal-title">Contact</h1>
+
+          <div class="legal-body">
+            <h2>Get in Touch</h2>
+            <p>For payment issues, refund requests, or general questions:</p>
+
+            <div class="contact-card">
+              <div class="contact-row">
+                <span class="contact-label">&gt; Email:</span>
+                <a href="mailto:deadcv@deadcv.com" class="contact-val">deadcv@deadcv.com</a>
+              </div>
+              <div class="contact-row">
+                <span class="contact-label">&gt; Response time:</span>
+                <span class="contact-val">usually within 24–48 hours</span>
+              </div>
+            </div>
+
+            <p>Please include your Order ID in any payment-related enquiries.</p>
+
+            <h2>Technical Issues</h2>
+            <p>If the roast didn't generate after a successful payment, include your Order ID (starts with <code>DEAD-</code>) and we'll sort it out.</p>
+          </div>
+        </div>
+      </main>
+
+      <!-- ── FOOTER ────────────────────────────── -->
+      <footer class="footer" id="footer">
+        <div class="footer__grid">
+          <div class="footer__col">
+            <span class="footer__logo">💀 DEADCV</span>
+            <span class="footer__year">2026</span>
+          </div>
+          <div class="footer__col">
+            <span class="footer__line">probably not a real company</span>
+            <span class="footer__line">made somewhere on the internet</span>
+          </div>
+          <div class="footer__col">
+            <span class="footer__line">no cookies were harmed</span>
+            <span class="footer__line">
+              <a href="mailto:deadcv@deadcv.com" class="footer__link">deadcv@deadcv.com</a>
+            </span>
+            <div class="footer__legal-links">
+              <a href="/terms" class="footer__link">Terms</a>
+              <a href="/privacy" class="footer__link">Privacy</a>
+              <a href="/refund" class="footer__link">Refund</a>
+              <a href="/contact" class="footer__link">Contact</a>
+            </div>
+          </div>
+        </div>
+        <div class="footer__bottom">
+          <span class="footer__ascii">
+            ═══════════════════════════════════════════════════════════════
+          </span>
+          <span class="footer__tagline">
+            if you scrolled this far, your resume definitely needs help
+          </span>
+        </div>
+      </footer>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,69 @@
+# ─────────────────────────────────────────────────────────────
+# DEADCV — .gitignore
+# ─────────────────────────────────────────────────────────────
+
+# ── Secrets — NEVER commit these ─────────────────────────────
+.env
+.env.local
+.env.development
+.env.production
+.env.staging
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*.local
+
+# ── Dependencies ──────────────────────────────────────────────
+node_modules/
+
+# ── Build output ──────────────────────────────────────────────
+dist/
+dist-ssr/
+.next/
+out/
+build/
+.vercel/
+
+# ── Customer data — NEVER commit ──────────────────────────────
+# Uploaded resume files
+uploads/
+# Order records contain resume text and payment metadata
+data/orders.json
+
+# ── Logs ──────────────────────────────────────────────────────
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ── Certificates & private keys ───────────────────────────────
+*.pem
+*.p12
+*.key
+*.crt
+*.pfx
+
+# ── OS / Editor ───────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ── Misc ──────────────────────────────────────────────────────
+*.local
+.cache/
+tmp/
+temp/
