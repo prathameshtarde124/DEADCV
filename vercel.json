@@ -25,31 +25,11 @@
       "dest": "/server.js"
     },
     {
-      "src": "/assets/(.*)",
-      "dest": "/dist/assets/$1"
-    },
-    {
-      "src": "/payment/(.*)",
-      "dest": "/dist/payment/$1"
-    },
-    {
-      "src": "/(.*)\\.(js|css|png|jpg|jpeg|svg|ico|woff|woff2|json)",
-      "dest": "/dist/$1.$2"
-    },
-    {
-      "src": "/(upload|payment|waiting|processing|result|owner|terms|privacy|refund|contact|health)",
-      "dest": "/dist/index.html"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/dist/$1"
-    },
-    {
       "handle": "filesystem"
     },
     {
       "src": "/(.*)",
-      "dest": "/dist/index.html"
+      "dest": "/index.html"
     }
   ],
   "env": {
