@@ -501,31 +501,84 @@ async function initPaymentPage() {
     return;
   }
 
-  if (!config.razorpayConfigured || !config.razorpayKeyId) {
-    blockEl('pay2-init-error');
-    return;
-  }
-
-  _checkoutKeyId = config.razorpayKeyId;
-
   // Update price labels from server values — single global $1, INR is live conversion
+  // Do this before razorpay check so INR is always visible even when Razorpay not configured
   const intlPriceEl = document.getElementById('intl-price-display');
   const upiPriceEl  = document.getElementById('upi-price-display');
   const upiInrNote  = document.getElementById('upi-inr-note');
   const intlBtnLbl  = document.getElementById('btn-intl-label');
   const priceUSD    = config.displayPriceUSD || '$1';
   const inrDisplay  = config.displayInrEquiv || config.displayUpiINR || `₹${config.inrEquiv || 88}`;
-  const inrVal      = config.displayInrEquiv || config.displayUpiINR || `₹${config.inrEquiv || 88}`;
   if (intlPriceEl) intlPriceEl.textContent = priceUSD;
   if (upiPriceEl)  upiPriceEl.textContent  = inrDisplay;
   if (upiInrNote)  upiInrNote.textContent  = inrDisplay;
   if (intlBtnLbl)  intlBtnLbl.textContent  = `PAY ${priceUSD} & GET COOKED →`;
-  // Update all generic inr-equiv spans on the page (hero, how, final cta)
   document.querySelectorAll('.inr-equiv, #hero-inr-val').forEach(el => {
     el.textContent = inrDisplay;
   });
   const heroNote = document.getElementById('hero-inr-note');
   if (heroNote) heroNote.style.display = '';
+
+  // ── TEST MODE (dev only) — show TEST PAYMENT → ROAST bypass ──
+  const testBox = document.getElementById('test-mode-box');
+  const testBtn = document.getElementById('btn-test-approve');
+  const testErr = document.getElementById('test-mode-error');
+  if (config.testMode) {
+    if (testBox) testBox.style.display = 'block';
+    if (testBtn && !testBtn.dataset.hasListener) {
+      testBtn.dataset.hasListener = 'true';
+      testBtn.addEventListener('click', async () => {
+        if (testErr) { testErr.style.display = 'none'; testErr.textContent = ''; }
+        testBtn.textContent = 'APPROVING...'; testBtn.disabled = true;
+        try {
+          const r = await fetch('/api/payments/test-approve', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ deadcvOrderId: _checkoutOrderId })
+          });
+          const j = await r.json();
+          if (r.ok && j.success) {
+            playCursedBeep(980, 'sine', 0.3, 0.08);
+            navigateTo(`/processing?orderId=${encodeURIComponent(_checkoutOrderId)}`);
+          } else {
+            throw new Error(j.error || 'Test approve failed');
+          }
+        } catch (e) {
+          if (testErr) { testErr.textContent = '> ' + (e.message || 'Test payment failed'); testErr.style.display = 'block'; }
+          playCursedBeep(200, 'sawtooth', 0.2, 0.08);
+        } finally {
+          testBtn.textContent = 'TEST PAYMENT → ROAST'; testBtn.disabled = false;
+        }
+      });
+    }
+  } else {
+    if (testBox) testBox.style.display = 'none';
+  }
+
+  // If Razorpay not configured and not in test mode, show error but still reveal UPI door
+  if (!config.razorpayConfigured || !config.razorpayKeyId) {
+    if (!config.testMode) {
+      blockEl('pay2-init-error');
+      // Still reveal doors for UPI — user can pay via QR
+      blockEl('pay2-doors');
+      setIntlState('unavailable');
+      // Wire UTR anyway
+      const utrInput2 = document.getElementById('utr-input');
+      const utrBtn2   = document.getElementById('btn-submit-utr');
+      if (utrBtn2 && !utrBtn2.dataset.hasListener) {
+        utrBtn2.dataset.hasListener = 'true';
+        utrBtn2.addEventListener('click', () => submitUTR());
+      }
+      if (utrInput2 && !utrInput2.dataset.hasListener) {
+        utrInput2.dataset.hasListener = 'true';
+        utrInput2.addEventListener('keydown', (e) => { if (e.key === 'Enter') submitUTR(); });
+      }
+      return;
+    }
+    // In test mode, allow checkout to be attempted but will fail gracefully
+  }
+
+  _checkoutKeyId = config.razorpayKeyId;
 
   // Show intl door state
   if (config.internationalEnabled) {
@@ -843,14 +896,24 @@ async function initProcessingPage() {
 
   const progressBar = document.getElementById('proc-progress');
   const activeStep = document.getElementById('proc-active-step');
+  const procError = document.getElementById('proc-error');
+  const procErrorMsg = document.getElementById('proc-error-msg');
+  const procRetryBtn = document.getElementById('btn-proc-retry');
+  const procSpecCopy = document.getElementById('proc-spec-copy');
+
+  // Show spec copy lines for vibe (per spec) after short delay
+  if (procSpecCopy) setTimeout(() => { procSpecCopy.style.display = 'block'; }, 900);
 
   const steps = [
-    { text: '> auditing buzzword overdose...', pct: 25 },
-    { text: '> calculating recruiter cringe factor...', pct: 55 },
-    { text: '> detecting missing measurable metrics...', pct: 80 },
-    { text: '> assembling viral autopsy report...', pct: 100 }
+    { text: '> reading resume........ OK', pct: 25 },
+    { text: '> finding bullshit...... OK', pct: 45 },
+    { text: '> checking projects..... OK', pct: 65 },
+    { text: '> checking skills....... OK', pct: 80 },
+    { text: '> calling recruiter..... FAILED', pct: 90 },
+    { text: '> final diagnosis incoming...', pct: 100 }
   ];
 
+  if (procError) procError.style.display = 'none';
   let currentStep = 0;
   const stepInterval = setInterval(() => {
     if (currentStep < steps.length) {
@@ -859,29 +922,69 @@ async function initProcessingPage() {
       playCursedBeep(450 + currentStep * 100, 'square', 0.05, 0.02);
       currentStep++;
     }
-  }, 500);
+  }, 480);
 
-  // Request the roast generation from backend
+  // Wire retry button (once)
+  if (procRetryBtn && !procRetryBtn.dataset.hasListener) {
+    procRetryBtn.dataset.hasListener = 'true';
+    procRetryBtn.addEventListener('click', () => {
+      if (procError) procError.style.display = 'none';
+      playCursedBeep(600, 'sawtooth', 0.1, 0.05);
+      initProcessingPage();
+    });
+  }
+
+  // Request the roast generation from backend — do NOT fake before API finishes
   try {
+    if (!orderId || orderId === 'DEAD-SAMPLE') {
+      throw new Error('no orderId — upload a resume first');
+    }
     const res = await fetch(`/api/orders/${encodeURIComponent(orderId)}/roast`);
     const data = await res.json();
 
     clearInterval(stepInterval);
     if (progressBar) progressBar.style.width = '100%';
+    if (activeStep) activeStep.textContent = '> final diagnosis incoming...';
 
     if (data.success && data.roast) {
+      // Validate roast not empty
+      if (!data.roast.deadPercentage && !data.roast.death_score) {
+        throw new Error('the AI came back with absolutely nothing.');
+      }
       sessionStorage.setItem(`deadcv_roast_${orderId}`, JSON.stringify(data.roast));
       setTimeout(() => {
         navigateTo(`/result?orderId=${encodeURIComponent(orderId)}`);
       }, 700);
     } else {
-      alert('☠️ ' + (data.error || 'Could not generate roast report.'));
-      navigateTo(`/waiting?orderId=${encodeURIComponent(orderId)}`);
+      // Map backend errors to spec messages
+      const raw = (data.error || 'the roast machine exploded.').toLowerCase();
+      let msg = data.error || 'the roast machine exploded.';
+      if (raw.includes('payment') && raw.includes('not yet')) msg = 'payment not yet approved. resume is still waiting in morgue lobby.';
+      else if (raw.includes('payment received')) msg = 'payment received. we\'re verifying it.';
+      else if (raw.includes('nothing') || raw.includes('empty')) msg = 'the AI came back with absolutely nothing.';
+      else if (raw.includes('exploded') || raw.includes('cremation') || raw.includes('failed')) msg = 'the roast machine exploded.';
+      if (procError && procErrorMsg) {
+        procErrorMsg.textContent = msg;
+        procError.style.display = 'block';
+        if (procSpecCopy) procSpecCopy.style.display = 'block';
+        playCursedBeep(130, 'sawtooth', 0.4, 0.1);
+      } else {
+        // Fallback alert if DOM missing
+        alert('☠️ ' + msg);
+      }
     }
   } catch (err) {
     clearInterval(stepInterval);
     console.error('Error generating roast:', err);
-    alert('☠️ Error communicating with morgue AI engine.');
+    if (procError && procErrorMsg) {
+      const msg = err.message && err.message.includes('nothing') ? 'the AI came back with absolutely nothing.' : 'the roast machine exploded.';
+      procErrorMsg.textContent = msg + (err.message ? ' ('+err.message.slice(0,80)+')' : '');
+      procError.style.display = 'block';
+      if (procSpecCopy) procSpecCopy.style.display = 'block';
+      playCursedBeep(130, 'sawtooth', 0.4, 0.1);
+    } else {
+      alert('☠️ the roast machine exploded.');
+    }
   }
 }
 

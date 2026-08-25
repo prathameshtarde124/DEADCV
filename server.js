@@ -38,6 +38,8 @@ const UPI_PRICE_INR = () => {
   return Math.round(PRICE_USD() * FALLBACK_RATE);
 };
 const PRICE_INR = UPI_PRICE_INR; // legacy alias — do not use for tiered pricing
+const TEST_MODE = process.env.DEADCV_TEST_MODE === 'true';
+const IS_PROD   = process.env.VERCEL === '1' || process.env.NODE_ENV === 'production';
 
 // ── Live USD→INR exchange rate (cached 1 hour) ────────────────
 // Used only for display and UPI amount recording.
@@ -197,34 +199,103 @@ function updateOrder(orderId, updateFn) {
 }
 
 // ═════════════════════════════════════════════════════════════
-// RESUME TEXT EXTRACTION
+// RESUME TEXT EXTRACTION — supports PDF (pdf-parse v1+v2) + DOCX
 // ═════════════════════════════════════════════════════════════
 async function extractResumeText(fileBuffer, mimeType, originalName) {
   const ext = path.extname(originalName).toLowerCase();
 
+  // Basic buffer sanity
+  if (!fileBuffer || fileBuffer.length === 0) {
+    throw new Error('bro this file is dead. (empty file — 0 bytes)');
+  }
+  if (fileBuffer.length > 10 * 1024 * 1024) {
+    throw new Error('file too large. the resume is already suffering enough. (max 10 MB)');
+  }
+
+  // ── PDF ───────────────────────────────────────────────────
   if (mimeType === 'application/pdf' || ext === '.pdf') {
+    let text = '';
+    let debugSource = '';
     try {
-      // pdf-parse is a CJS module
-      const pdfParse = require('pdf-parse');
-      const parsed   = await pdfParse(fileBuffer);
-      return (parsed.text || '').trim();
+      // Try pdf-parse v2 (PDFParse class) first — used in pdf-parse@2.4.5
+      try {
+        const { PDFParse } = await import('pdf-parse');
+        if (PDFParse) {
+          const parser = new PDFParse({ data: new Uint8Array(fileBuffer) });
+          const result = await parser.getText();
+          text = (result.text || '').trim();
+          debugSource = 'pdf-parse@v2';
+          // Cleanup if available
+          if (result && typeof result.destroy === 'function') try { await result.destroy(); } catch {}
+          if (parser && typeof parser.destroy === 'function') try { await parser.destroy(); } catch {}
+        }
+      } catch (v2err) {
+        // Fallback to v1 style require
+        if (!text) {
+          const pdfParseMod = require('pdf-parse');
+          const fn = pdfParseMod.default || pdfParseMod.PDFParse || pdfParseMod;
+          // v1 exports a function directly
+          if (typeof fn === 'function' && fn.length <= 2) {
+            const parsed = await fn(fileBuffer);
+            text = (parsed.text || '').trim();
+            debugSource = 'pdf-parse@v1';
+          } else if (pdfParseMod.PDFParse) {
+            const parser2 = new pdfParseMod.PDFParse({ data: new Uint8Array(fileBuffer) });
+            const result2 = await parser2.getText();
+            text = (result2.text || '').trim();
+            debugSource = 'pdf-parse@v2-require';
+            if (parser2 && typeof parser2.destroy === 'function') try { await parser2.destroy(); } catch {}
+          }
+        }
+      }
+
+      if (!text || text.length === 0) {
+        console.warn(`[EXTRACT] FILE: ${originalName} TEXT EXTRACTED: NO CHARACTERS: 0 SOURCE: ${debugSource}`);
+        throw new Error('bro we couldn\'t read this corpse. (PDF contains no extractable text — scanned image? try a text-based PDF or DOCX)');
+      }
+
+      const wordCount = text.split(/\s+/).filter(Boolean).length;
+      console.log(`[EXTRACT] FILE: ${originalName} TEXT EXTRACTED: YES CHARACTERS: ${text.length} WORDS: ${wordCount} SOURCE: ${debugSource}`);
+      // Debug: first 120 chars preview (never full resume in logs verbatim for privacy)
+      console.log(`[EXTRACT] PREVIEW: ${text.slice(0, 120).replace(/\s+/g,' ').trim()}...`);
+      return text;
     } catch (err) {
-      console.error('PDF parsing error:', err.message);
-      throw new Error('PDF appears to contain nothing useful.');
+      // If we already threw our custom "bro we couldn't read" message, rethrow it
+      if (err.message && err.message.startsWith('bro we couldn')) throw err;
+      if (err.message && err.message.includes('no extractable text')) throw err;
+      console.error(`[EXTRACT] PDF parsing failure FILE: ${originalName} SOURCE: ${debugSource} ERROR:`, err.message);
+      throw new Error('bro we couldn\'t read this corpse. (PDF parsing failed — try exporting your resume as DOCX or a text-based PDF)');
     }
   }
 
+  // ── DOCX / DOC ───────────────────────────────────────────
   if (
     mimeType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
     mimeType === 'application/msword' ||
     ext === '.docx' || ext === '.doc'
   ) {
+    // For legacy .doc (not docx), mammoth will fail — give useful error
+    if (ext === '.doc' && mimeType !== 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+      console.warn(`[EXTRACT] FILE: ${originalName} is legacy .doc — attempting mammoth anyway`);
+    }
     try {
       const result = await mammoth.extractRawText({ buffer: fileBuffer });
-      return (result.value || '').trim();
+      const text = (result.value || '').trim();
+      if (!text || text.length === 0) {
+        console.warn(`[EXTRACT] FILE: ${originalName} TEXT EXTRACTED: NO CHARACTERS: 0 (mammoth empty)`);
+        throw new Error('bro we couldn\'t read this corpse. (DOCX appears empty or contains only images)');
+      }
+      const wordCount = text.split(/\s+/).filter(Boolean).length;
+      console.log(`[EXTRACT] FILE: ${originalName} TEXT EXTRACTED: YES CHARACTERS: ${text.length} WORDS: ${wordCount} SOURCE: mammoth`);
+      console.log(`[EXTRACT] PREVIEW: ${text.slice(0, 120).replace(/\s+/g,' ').trim()}...`);
+      if (result.messages && result.messages.length) {
+        console.log(`[EXTRACT] mammoth messages:`, result.messages.slice(0,3));
+      }
+      return text;
     } catch (err) {
-      console.error('DOCX parsing error:', err.message);
-      throw new Error('this corpse is unreadable.');
+      if (err.message && err.message.startsWith('bro we couldn')) throw err;
+      console.error(`[EXTRACT] DOCX parsing failure FILE: ${originalName} ERROR:`, err.message);
+      throw new Error('this corpse is unreadable. (DOCX parsing failed — try re-exporting from Word/Google Docs)');
     }
   }
 
@@ -247,6 +318,9 @@ app.get('/api/config', async (req, res) => {
   const priceUSD   = PRICE_USD();
   const inrEquiv   = Math.round(priceUSD * usdInr);
   const upiPrice   = UPI_PRICE_INR();
+
+  // DEADCV_TEST_MODE — only true in local dev, never in prod/Vercel
+  const testMode = TEST_MODE && !IS_PROD;
 
   res.json({
     // Public Razorpay key — safe to expose to frontend
@@ -273,24 +347,38 @@ app.get('/api/config', async (req, res) => {
     PRICE_INR:       inrEquiv,
     // Env-configured static fallback (for order verification)
     upiPriceFallback: upiPrice,
+
+    // Test mode — enables TEST PAYMENT → ROAST button in dev only
+    testMode,
+    isVercel: IS_VERCEL,
   });
 });
 
 // ═════════════════════════════════════════════════════════════
-// POST /api/upload
+// POST /api/upload — Extracts text server-side, validates, creates order
 // ═════════════════════════════════════════════════════════════
 app.post('/api/upload', (req, res) => {
   upload.single('resume')(req, res, async (err) => {
     if (err) {
       if (err.code === 'LIMIT_FILE_SIZE') {
-        return res.status(400).json({ success: false, error: 'file too large. the resume is already suffering enough.' });
+        console.warn(`[UPLOAD] REJECTED: file too large >10MB`);
+        return res.status(400).json({ success: false, error: 'bro this file is dead. (too large — max 10 MB)' });
       }
-      return res.status(400).json({ success: false, error: 'upload failed. something went terribly wrong in transit.' });
+      if (err.code === 'LIMIT_UNEXPECTED_FILE') {
+        return res.status(400).json({ success: false, error: 'bro this file is dead. (unexpected field name — use "resume")' });
+      }
+      console.error(`[UPLOAD] multer error:`, err.message);
+      return res.status(400).json({ success: false, error: 'bro this file is dead. (' + err.message.slice(0,80) + ')' });
     }
 
     try {
       const file = req.file;
-      if (!file) return res.status(400).json({ success: false, error: 'no file provided.' });
+      if (!file) {
+        console.warn(`[UPLOAD] REJECTED: no file`);
+        return res.status(400).json({ success: false, error: 'bro this file is dead. (no file provided — did you select a PDF or DOCX?)' });
+      }
+
+      console.log(`[UPLOAD] FILE: ${file.originalname} TYPE: ${file.mimetype} SIZE: ${file.size} bytes`);
 
       const targetJob      = (req.body.targetJob      || '').trim();
       const jobDescription = (req.body.jobDescription || '').trim();
@@ -300,11 +388,16 @@ app.post('/api/upload', (req, res) => {
       try {
         resumeText = await extractResumeText(file.buffer, file.mimetype, file.originalname);
       } catch (e) {
+        console.warn(`[UPLOAD] EXTRACTION FAILED FILE: ${file.originalname} ERROR: ${e.message}`);
         return res.status(400).json({ success: false, error: e.message });
       }
 
-      if (!resumeText || resumeText.length < 15) {
-        return res.status(400).json({ success: false, error: 'PDF appears to contain nothing useful.' });
+      // Validate extracted text — do NOT send empty to AI
+      const wordCount = resumeText.split(/\s+/).filter(Boolean).length;
+      console.log(`[UPLOAD] FILE: ${file.originalname} TEXT EXTRACTED: YES CHARACTERS: ${resumeText.length} WORDS: ${wordCount}`);
+      if (!resumeText || resumeText.length < 50 || wordCount < 10) {
+        console.warn(`[UPLOAD] REJECTED: text too short FILE: ${file.originalname} CHARACTERS: ${resumeText.length} WORDS: ${wordCount}`);
+        return res.status(400).json({ success: false, error: 'bro we couldn\'t read this corpse. (extracted only ' + resumeText.length + ' characters — is this a scanned image? try exporting as DOCX or text-based PDF)' });
       }
 
       const timestampPart = Date.now().toString(36).toUpperCase();
@@ -598,6 +691,40 @@ app.post('/api/payments/submit-utr', async (req, res) => {
 });
 
 // ═════════════════════════════════════════════════════════════
+// POST /api/payments/test-approve — DEVELOPMENT ONLY
+// Allows TEST PAYMENT → ROAST without real Razorpay when DEADCV_TEST_MODE=true
+// Never available in production/Vercel.
+// ═════════════════════════════════════════════════════════════
+app.post('/api/payments/test-approve', async (req, res) => {
+  if (!TEST_MODE || IS_PROD) {
+    return res.status(403).json({ success: false, error: 'TEST MODE disabled — real payment required.' });
+  }
+  const { deadcvOrderId } = req.body;
+  if (!deadcvOrderId) return res.status(400).json({ success: false, error: 'deadcvOrderId is required.' });
+  const orders = getOrders();
+  const found = orders.find(o => o.orderId === deadcvOrderId);
+  if (!found) return res.status(404).json({ success: false, error: 'DEADCV order not found.' });
+  if (found.paymentStatus === 'approved') {
+    return res.json({ success: true, message: 'Already approved (test mode).', deadcvOrderId });
+  }
+  // Validate that resume text was actually extracted
+  if (!found.resumeText || found.resumeText.length < 50) {
+    return res.status(400).json({ success: false, error: 'we couldn\'t read this corpse. (no extractable text — cannot test roast)' });
+  }
+  console.log(`[TEST-APPROVE] Order ${deadcvOrderId} approved via TEST_MODE`);
+  updateOrder(deadcvOrderId, o => ({
+    ...o,
+    paymentStatus:  'approved',
+    analysisStatus: 'ready',
+    paymentMethod:  'test_mode',
+    paymentCurrency:'TEST',
+    approvedAt:     new Date().toISOString(),
+    verificationNote: 'approved via DEADCV_TEST_MODE (dev only)',
+  }));
+  return res.json({ success: true, message: 'Test payment approved — roast unlocked.', deadcvOrderId });
+});
+
+// ═════════════════════════════════════════════════════════════
 // GET /api/orders/:orderId
 // ═════════════════════════════════════════════════════════════
 app.get('/api/orders/:orderId', (req, res) => {
@@ -633,19 +760,42 @@ app.get('/api/orders/:orderId/roast', async (req, res) => {
   const found = getOrders().find(o => o.orderId === req.params.orderId);
   if (!found) return res.status(404).json({ success: false, error: 'order not found in morgue database.' });
 
+  // Enhanced payment status messages per spec
   if (found.paymentStatus !== 'approved') {
+    if (found.paymentStatus === 'pending_verification') {
+      return res.status(402).json({
+        success: false,
+        error:   'payment received. we\'re verifying it. (UTR submitted — operator will verify shortly)',
+        paymentStatus: found.paymentStatus,
+      });
+    }
+    if (found.paymentStatus === 'pending') {
+      return res.status(402).json({
+        success: false,
+        error:   'payment not yet approved. resume is still waiting in morgue lobby. (complete payment to unlock roast)',
+        paymentStatus: found.paymentStatus,
+      });
+    }
     return res.status(402).json({
       success: false,
       error:   'payment not yet approved. resume is still waiting in morgue lobby.',
+      paymentStatus: found.paymentStatus,
     });
   }
 
-  // Return cached roast — prevents duplicate AI generation
+  // Guard: never send empty text to AI
+  if (!found.resumeText || found.resumeText.trim().length < 50) {
+    console.error(`[ROAST] Order ${found.orderId} has no extractable resume text — aborting AI`);
+    return res.status(500).json({ success: false, error: 'bro we couldn\'t read this corpse. (no text extracted — cannot generate roast)' });
+  }
+
+  // Return cached roast — prevents duplicate AI generation (idempotent)
   if (found.roastResult) {
     return res.json({ success: true, orderId: found.orderId, roast: found.roastResult, targetJob: found.targetJob });
   }
 
   try {
+    console.log(`[ROAST] Generating roast for ${found.orderId} file:${found.uploadedFileRef?.originalName} job:${found.targetJob} chars:${found.resumeText.length}`);
     const roast = await generateRoastWithAI(
       found.resumeText,
       found.targetJob,
@@ -653,6 +803,13 @@ app.get('/api/orders/:orderId/roast', async (req, res) => {
       found.uploadedFileRef?.originalName || 'resume.pdf',
       found.roastIntensity || 'Brutal',
     );
+
+    if (!roast || typeof roast !== 'object' || !roast.deadPercentage) {
+      console.error(`[ROAST] Empty AI response for ${found.orderId}`, roast);
+      return res.status(500).json({ success: false, error: 'the AI came back with absolutely nothing. (empty response — try again)' });
+    }
+
+    console.log(`[ROAST] Success for ${found.orderId} — ${roast.deadPercentage}% DEAD cause:${roast.causeOfDeath}`);
 
     const updated = updateOrder(req.params.orderId, o => ({
       ...o,
@@ -663,8 +820,10 @@ app.get('/api/orders/:orderId/roast', async (req, res) => {
 
     return res.json({ success: true, orderId: updated.orderId, roast: updated.roastResult, targetJob: updated.targetJob });
   } catch (err) {
-    console.error('Roast generation error:', err);
-    return res.status(500).json({ success: false, error: 'cremation malfunction: could not roast resume.' });
+    console.error('[ROAST] Roast generation error:', err);
+    // Log real error server-side, return DEADCV style message to user
+    const msg = err.message && err.message.includes('API key') ? 'the roast machine exploded. (AI key missing or invalid)' : 'the roast machine exploded. (AI failed — try again in a moment)';
+    return res.status(500).json({ success: false, error: msg });
   }
 });
 

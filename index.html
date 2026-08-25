@@ -645,6 +645,14 @@
 
           </div><!-- /pay2-doors -->
 
+          <!-- ── TEST MODE (dev only, never in prod) ─────────── -->
+          <div id="test-mode-box" style="display:none; border:2px dashed var(--yellow); padding:20px; text-align:center; background:#1a1a00; margin-bottom:24px;">
+            <div style="color:var(--yellow); font-weight:700; letter-spacing:3px; font-size:11px; margin-bottom:8px;">⚠️ DEV ONLY — TEST MODE ACTIVE</div>
+            <p style="color:var(--fg-dim); font-size:12px; margin-bottom:12px; line-height:1.6;">Bypass real payment for local testing.<br><span style="color:var(--fg-dimmer); font-size:11px;">This button NEVER appears in production when <code>DEADCV_TEST_MODE=false</code>.</span></p>
+            <button id="btn-test-approve" class="pay2-door__cta" style="background:var(--yellow); color:#000; border-color:var(--yellow); width:auto; padding:12px 28px; font-size:13px;">TEST PAYMENT → ROAST</button>
+            <div id="test-mode-error" style="display:none; color:var(--red); font-size:11px; margin-top:10px; font-family:var(--font-mono);"></div>
+          </div>
+
           <div class="pay2-legal">
             <a href="/terms">Terms</a> ·
             <a href="/privacy">Privacy</a> ·
@@ -735,6 +743,25 @@
 
             <div class="proc-loading-bar">
               <div class="proc-loading-progress" id="proc-progress"></div>
+            </div>
+
+            <!-- Error state: roast machine exploded -->
+            <div id="proc-error" style="display:none; margin-top:24px; border:2px solid var(--red); background:#1a0606; padding:18px; text-align:center;">
+              <div style="color:var(--red); font-weight:700; letter-spacing:2px; font-size:13px; margin-bottom:8px;">💥 THE ROAST MACHINE EXPLODED.</div>
+              <p id="proc-error-msg" style="color:var(--fg-dim); font-size:12px; line-height:1.6; margin-bottom:14px;">the AI came back with absolutely nothing.</p>
+              <button id="btn-proc-retry" class="pay2-door__cta" style="background:var(--red); color:#fff; border-color:var(--red); width:auto; padding:10px 24px;">TRY AGAIN →</button>
+              <div style="margin-top:10px;"><a href="/upload" style="color:var(--fg-dimmer); font-size:11px; text-decoration:underline;">← start over</a></div>
+            </div>
+
+            <!-- Spec detailed processing copy (hidden until needed, keeps weird DEADCV vibe) -->
+            <div id="proc-spec-copy" style="display:none; margin-top:18px; text-align:left; font-size:11px; color:var(--fg-dimmer); line-height:1.8; font-family:var(--font-mono); border:1px dashed var(--border-dotted); padding:12px; background:#0a0a0a;">
+              <div>DEADCV ANALYSIS</div>
+              <div>reading resume........ OK</div>
+              <div>finding bullshit...... OK</div>
+              <div>checking projects..... OK</div>
+              <div>checking skills....... OK</div>
+              <div>calling recruiter..... FAILED</div>
+              <div style="color:var(--yellow); margin-top:6px;">final diagnosis incoming...</div>
             </div>
           </div>
         </div>

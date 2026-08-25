@@ -16,17 +16,75 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
  * @param {string} roastIntensity - Intensity level ('Light' | 'Brutal' | 'Unhinged')
  */
 export async function generateRoastWithAI(resumeText, targetJob = 'Software Engineer', jobDescription = '', originalFilename = 'resume.pdf', roastIntensity = 'Brutal') {
-  const apiKey = process.env.GEMINI_API_KEY;
+  // Support both GEMINI_API_KEY and AI_API_KEY (spec says AI_API_KEY)
+  const apiKey = process.env.GEMINI_API_KEY || process.env.AI_API_KEY || process.env.GOOGLE_API_KEY || '';
+
+  // Guard: never send empty text to AI
+  if (!resumeText || resumeText.trim().length < 50) {
+    console.warn('[ROAST] Resume text too short, skipping AI — using heuristic');
+    return generateForensicHeuristicRoast(resumeText || '', targetJob, jobDescription, originalFilename, roastIntensity);
+  }
 
   if (apiKey) {
     try {
-      return await generateGeminiRoast(resumeText, targetJob, jobDescription, originalFilename, roastIntensity, apiKey);
+      console.log(`[ROAST] Calling Gemini for ${originalFilename} target:${targetJob} chars:${resumeText.length}`);
+      const result = await generateGeminiRoast(resumeText, targetJob, jobDescription, originalFilename, roastIntensity, apiKey);
+      // Validate result has required fields, normalize if needed
+      const normalized = normalizeRoastResult(result, resumeText, targetJob, originalFilename);
+      if (!normalized || !normalized.deadPercentage) {
+        console.warn('[ROAST] Gemini returned invalid structure, falling back to heuristic');
+        throw new Error('invalid roast structure');
+      }
+      console.log(`[ROAST] Gemini success — dead:${normalized.deadPercentage}% cause:${normalized.causeOfDeath}`);
+      return normalized;
     } catch (err) {
       console.warn('Gemini API call failed, using Forensic Heuristic Roast Engine:', err.message);
     }
+  } else {
+    console.log('[ROAST] No AI key configured — using heuristic engine');
   }
 
   return generateForensicHeuristicRoast(resumeText, targetJob, jobDescription, originalFilename, roastIntensity);
+}
+
+// ── Normalizer — maps alternative AI schemas (death_score etc) to DEADCV schema ──
+function normalizeRoastResult(r, resumeText, targetJob, originalFilename) {
+  if (!r || typeof r !== 'object') return null;
+  // If AI already returned our expected schema, return as-is (with sanitization)
+  if (r.deadPercentage && r.causeOfDeath) return r;
+
+  // Map spec example: death_score → deadPercentage, archetype → personality, etc.
+  const deadPercentage = r.deadPercentage ?? r.death_score ?? r.deathScore ?? r.score ?? null;
+  if (!deadPercentage) return r; // Let caller validate
+
+  return {
+    deadPercentage: Number(deadPercentage) || 73,
+    causeOfDeath: r.causeOfDeath || r.cause_of_death || r.causeOfDeath || r.cause || 'NO MEASURABLE IMPACT',
+    stats: r.stats || {
+      buzzwords: r.buzzwords ?? 10,
+      weakBullets: r.weakBullets ?? 5,
+      actualImpact: r.actualImpact ?? '2%',
+      recruiterSurvival: r.recruiterSurvival ?? '35%',
+      personality: r.archetype || r.personality || 'LINKEDIN NPC',
+      species: r.species || 'The "I did projects" type',
+      mostDangerousWord: r.mostDangerousWord || '"Developed" (5x)',
+      atsStatus: r.atsStatus || 'Barely breathing',
+    },
+    roasts: r.roasts || r.observations || r.stats?.roasts || [],
+    recruiterReaction: r.recruiterReaction || r.recruiter_reaction || r.recruiterReaction || '“Okay... but what did you actually accomplish?”',
+    strongestPart: r.strongestPart || r.strongest_part || r.strongest || 'Your name is spelled correctly.',
+    biggestWeakness: r.biggestWeakness || r.biggest_weakness || r.weakness || 'Zero measurable impact.',
+    shareText: r.shareText || r.share_text || `DEADCV just told me my resume is ${deadPercentage}% dead 💀 Check yours: https://deadcv.com`,
+    improvedRewrite: r.improvedRewrite || r.improved_rewrite || r.rewrite || {
+      originalBullet: 'Worked on various projects.',
+      critique: 'Passive filler, no metrics.',
+      fixedBullet: 'Engineered core module reducing latency by 32% for 10K+ users.',
+      actionPlan: ['Replace filler with metrics', 'Remove buzzwords', 'Add results']
+    },
+    // Preserve any extra fields like funniest_observation
+    funniestObservation: r.funniest_observation || r.funniestObservation || (r.roasts && r.roasts[0]?.comment) || '',
+    finalDiagnosis: r.final_diagnosis || r.finalDiagnosis || r.biggestWeakness || '',
+  };
 }
 
 // ═════════════════════════════════════════════════════════════
@@ -123,8 +181,24 @@ Return ONLY a JSON object strictly matching this schema:
 `;
 
   const result = await model.generateContent(prompt);
-  const textResponse = result.response.text();
-  return JSON.parse(textResponse);
+  let textResponse = result.response.text() || '';
+  // Strip markdown fences if Gemini wraps JSON in ```json ... ```
+  textResponse = textResponse.trim();
+  if (textResponse.startsWith('```')) {
+    textResponse = textResponse.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/,'').trim();
+  }
+  // Extract first JSON object if extra text surrounds it
+  const jsonStart = textResponse.indexOf('{');
+  const jsonEnd = textResponse.lastIndexOf('}');
+  if (jsonStart !== -1 && jsonEnd !== -1) {
+    textResponse = textResponse.slice(jsonStart, jsonEnd + 1);
+  }
+  try {
+    return JSON.parse(textResponse);
+  } catch (parseErr) {
+    console.error('[ROAST] Gemini JSON parse failed, raw preview:', textResponse.slice(0, 400));
+    throw new Error('Gemini returned invalid JSON: ' + parseErr.message);
+  }
 }
 
 // ═════════════════════════════════════════════════════════════
