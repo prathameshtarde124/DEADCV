@@ -1,7 +1,7 @@
 {
-  "upiId": "deadcv@upi",
-  "merchantName": "DEADCV",
+  "upiId": "8149375248@ybl",
+  "merchantName": "PRATHAMESH TARDE DEADCV",
   "amount": 96,
   "currency": "INR",
-  "note": "PUT YOUR REAL UPI ID HERE — QR WILL BE GENERATED AUTOMATICALLY FROM THIS FILE. DO NOT COMMIT REAL SECRETS TO PUBLIC REPO; USE .env (UPI_ID, UPI_MERCHANT_NAME, UPI_PRICE_INR) FOR PRODUCTION. This file is a local template."
+  "note": "Real UPI for PRATHAMESH TARDE DEADCV — QR auto-generated from this file + ORDER_ID. Production uses .env UPI_ID if set."
 }
