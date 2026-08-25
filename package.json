@@ -19,8 +19,9 @@
     "express": "^5.2.1",
     "mammoth": "^1.12.1",
     "multer": "^2.2.0",
-    "pdf-parse": "^2.4.5",
+    "pdf-parse": "^1.1.1",
     "qrcode": "^1.5.4",
-    "razorpay": "^2.9.4"
+    "razorpay": "^2.9.4",
+    "unpdf": "^1.7.0"
   }
 }

@@ -199,7 +199,8 @@ function updateOrder(orderId, updateFn) {
 }
 
 // ═════════════════════════════════════════════════════════════
-// RESUME TEXT EXTRACTION — supports PDF (pdf-parse v1+v2) + DOCX
+// RESUME TEXT EXTRACTION — PDF (unpdf primary, pdf-parse fallback) + DOCX (mammoth)
+// unpdf works on Vercel without native canvas/DOMMatrix.
 // ═════════════════════════════════════════════════════════════
 async function extractResumeText(fileBuffer, mimeType, originalName) {
   const ext = path.extname(originalName).toLowerCase();
@@ -214,56 +215,44 @@ async function extractResumeText(fileBuffer, mimeType, originalName) {
 
   // ── PDF ───────────────────────────────────────────────────
   if (mimeType === 'application/pdf' || ext === '.pdf') {
-    let text = '';
-    let debugSource = '';
+    let lastErr = null;
+    // Try unpdf first (Vercel-safe, no canvas)
     try {
-      // Try pdf-parse v2 (PDFParse class) first — used in pdf-parse@2.4.5
-      try {
-        const { PDFParse } = await import('pdf-parse');
-        if (PDFParse) {
-          const parser = new PDFParse({ data: new Uint8Array(fileBuffer) });
-          const result = await parser.getText();
-          text = (result.text || '').trim();
-          debugSource = 'pdf-parse@v2';
-          // Cleanup if available
-          if (result && typeof result.destroy === 'function') try { await result.destroy(); } catch {}
-          if (parser && typeof parser.destroy === 'function') try { await parser.destroy(); } catch {}
-        }
-      } catch (v2err) {
-        // Fallback to v1 style require
-        if (!text) {
-          const pdfParseMod = require('pdf-parse');
-          const fn = pdfParseMod.default || pdfParseMod.PDFParse || pdfParseMod;
-          // v1 exports a function directly
-          if (typeof fn === 'function' && fn.length <= 2) {
-            const parsed = await fn(fileBuffer);
-            text = (parsed.text || '').trim();
-            debugSource = 'pdf-parse@v1';
-          } else if (pdfParseMod.PDFParse) {
-            const parser2 = new pdfParseMod.PDFParse({ data: new Uint8Array(fileBuffer) });
-            const result2 = await parser2.getText();
-            text = (result2.text || '').trim();
-            debugSource = 'pdf-parse@v2-require';
-            if (parser2 && typeof parser2.destroy === 'function') try { await parser2.destroy(); } catch {}
-          }
-        }
+      const { extractText } = await import('unpdf');
+      const result = await extractText(new Uint8Array(fileBuffer), { mergePages: true });
+      // unpdf returns { text: string[] } or { text: string }
+      let text = '';
+      if (Array.isArray(result.text)) text = result.text.join('\n').trim();
+      else text = (result.text || '').trim();
+      if (text && text.length > 0) {
+        const wordCount = text.split(/\s+/).filter(Boolean).length;
+        console.log(`[EXTRACT] FILE: ${originalName} TEXT EXTRACTED: YES CHARACTERS: ${text.length} WORDS: ${wordCount} SOURCE: unpdf`);
+        console.log(`[EXTRACT] PREVIEW: ${text.slice(0, 120).replace(/\s+/g,' ').trim()}...`);
+        return text;
       }
-
+      console.warn(`[EXTRACT] unpdf returned empty for ${originalName}, trying pdf-parse fallback`);
+    } catch (e) {
+      lastErr = e;
+      console.warn(`[EXTRACT] unpdf failed for ${originalName}:`, e.message);
+    }
+    // Fallback to pdf-parse (v1.1.1)
+    try {
+      const pdfParseMod = require('pdf-parse');
+      const pdfParseFn = pdfParseMod.default || pdfParseMod;
+      if (typeof pdfParseFn !== 'function') throw new Error('pdf-parse not available');
+      const parsed = await pdfParseFn(fileBuffer);
+      const text = (parsed.text || '').trim();
       if (!text || text.length === 0) {
-        console.warn(`[EXTRACT] FILE: ${originalName} TEXT EXTRACTED: NO CHARACTERS: 0 SOURCE: ${debugSource}`);
+        console.warn(`[EXTRACT] FILE: ${originalName} TEXT EXTRACTED: NO CHARACTERS: 0 SOURCE: pdf-parse`);
         throw new Error('bro we couldn\'t read this corpse. (PDF contains no extractable text — scanned image? try a text-based PDF or DOCX)');
       }
-
       const wordCount = text.split(/\s+/).filter(Boolean).length;
-      console.log(`[EXTRACT] FILE: ${originalName} TEXT EXTRACTED: YES CHARACTERS: ${text.length} WORDS: ${wordCount} SOURCE: ${debugSource}`);
-      // Debug: first 120 chars preview (never full resume in logs verbatim for privacy)
+      console.log(`[EXTRACT] FILE: ${originalName} TEXT EXTRACTED: YES CHARACTERS: ${text.length} WORDS: ${wordCount} SOURCE: pdf-parse`);
       console.log(`[EXTRACT] PREVIEW: ${text.slice(0, 120).replace(/\s+/g,' ').trim()}...`);
       return text;
     } catch (err) {
-      // If we already threw our custom "bro we couldn't read" message, rethrow it
       if (err.message && err.message.startsWith('bro we couldn')) throw err;
-      if (err.message && err.message.includes('no extractable text')) throw err;
-      console.error(`[EXTRACT] PDF parsing failure FILE: ${originalName} SOURCE: ${debugSource} ERROR:`, err.message);
+      console.error(`[EXTRACT] PDF parsing failure FILE: ${originalName} ERROR:`, err.message, 'last unpdf err:', lastErr?.message);
       throw new Error('bro we couldn\'t read this corpse. (PDF parsing failed — try exporting your resume as DOCX or a text-based PDF)');
     }
   }
