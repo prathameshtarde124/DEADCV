@@ -41,6 +41,38 @@ const PRICE_INR = UPI_PRICE_INR; // legacy alias — do not use for tiered prici
 const TEST_MODE = process.env.DEADCV_TEST_MODE === 'true';
 const IS_PROD   = process.env.VERCEL === '1' || process.env.NODE_ENV === 'production';
 
+// ── UPI config file — new file where you keep your UPI ID (QR will be generated from it) ──
+// Priority: env UPI_ID > config/upi.json > null
+function readUpiFileConfig() {
+  try {
+    const p = path.join(__dirname, 'config', 'upi.json');
+    if (fs.existsSync(p)) {
+      const j = JSON.parse(fs.readFileSync(p, 'utf-8'));
+      return j;
+    }
+  } catch (e) {
+    console.warn('[UPI] failed to read config/upi.json', e.message);
+  }
+  return {};
+}
+const getUpiId = () => {
+  const env = (process.env.UPI_ID || '').trim();
+  if (env) return env;
+  const cfg = readUpiFileConfig();
+  if (cfg.upiId && String(cfg.upiId).trim()) return String(cfg.upiId).trim();
+  if (cfg.UPI_ID && String(cfg.UPI_ID).trim()) return String(cfg.UPI_ID).trim();
+  return null;
+};
+const getUpiMerchant = () => {
+  const env = (process.env.UPI_MERCHANT_NAME || '').trim();
+  if (env) return env;
+  const cfg = readUpiFileConfig();
+  if (cfg.merchantName && String(cfg.merchantName).trim()) return String(cfg.merchantName).trim();
+  if (cfg.merchant_name && String(cfg.merchant_name).trim()) return String(cfg.merchant_name).trim();
+  if (cfg.UPI_MERCHANT_NAME && String(cfg.UPI_MERCHANT_NAME).trim()) return String(cfg.UPI_MERCHANT_NAME).trim();
+  return 'DEADCV';
+};
+
 // ── Live USD→INR exchange rate (cached 1 hour) ────────────────
 // Used only for display and UPI amount recording.
 // The product price is always $1 USD — INR is the conversion shown to Indian users.
@@ -311,9 +343,9 @@ app.get('/api/config', async (req, res) => {
   // DEADCV_TEST_MODE — only true in local dev, never in prod/Vercel
   const testMode = TEST_MODE && !IS_PROD;
 
-  // UPI deep link config — read from env, never hardcode real ID in source
-  const upiId = (process.env.UPI_ID || '').trim() || null;
-  const upiMerchantName = (process.env.UPI_MERCHANT_NAME || 'DEADCV').trim();
+  // UPI deep link config — read from env or config/upi.json, never hardcode real ID in source
+  const upiId = getUpiId();
+  const upiMerchantName = getUpiMerchant();
   // UPI price is fixed at 96 per spec (from env)
   const upiPriceFixed = upiPrice;
 

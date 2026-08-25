@@ -629,6 +629,26 @@ async function initPaymentPage() {
   const upiQrSection = document.getElementById('upi-qr-section');
   const upiId = (config.upiId || '').trim();
   const upiMerchant = (config.upiMerchantName || 'DEADCV').trim();
+  // Generate QR dynamically from config/upi.json — replaces static public/payment/upi-qr.png
+  const upiQrImg = document.getElementById('upi-qr-img');
+  if (upiQrImg) {
+    if (upiId) {
+      const pa_qr = encodeURIComponent(upiId);
+      const pn_qr = encodeURIComponent(upiMerchant);
+      const am_qr = encodeURIComponent(String(upiPriceFixed));
+      const tr_qr = encodeURIComponent(_checkoutOrderId);
+      const qrUpiLink = `upi://pay?pa=${pa_qr}&pn=${pn_qr}&am=${am_qr}&cu=INR&tr=${tr_qr}`;
+      upiQrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(qrUpiLink)}`;
+      upiQrImg.alt = `UPI QR for ${upiId} ₹${upiPriceFixed} — auto-generated`;
+      upiQrImg.style.display = 'block';
+    } else {
+      upiQrImg.style.display = 'none';
+      if (upiQrSection) {
+        const instr = upiQrSection.querySelector('.pay2-qr-instruction');
+        if (instr) instr.textContent = 'UPI not configured — QR unavailable. Add UPI_ID to config/upi.json or .env';
+      }
+    }
+  }
   // Keep QR as secondary for desktop, but button is primary
   if (upiQrSection) upiQrSection.style.display = '';
   if (upiFallback) upiFallback.style.display = 'none';

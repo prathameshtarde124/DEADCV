@@ -7,7 +7,8 @@
       "config": {
         "includeFiles": [
           "lib/**",
-          "roastEngine.js"
+          "roastEngine.js",
+          "config/**"
         ]
       }
     },

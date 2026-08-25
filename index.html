@@ -309,9 +309,9 @@
               <div id="upi-qr-section">
                 <div class="pay2-qr-frame">
                   <div class="pay2-qr-corner pay2-qr-corner--tl"></div><div class="pay2-qr-corner pay2-qr-corner--tr"></div><div class="pay2-qr-corner pay2-qr-corner--bl"></div><div class="pay2-qr-corner pay2-qr-corner--br"></div>
-                  <div class="pay2-qr-inner"><img src="/payment/upi-qr.png" alt="UPI QR code — scan with any UPI app to pay" class="pay2-qr-img" draggable="false" /></div>
+                  <div class="pay2-qr-inner"><img id="upi-qr-img" src="" alt="UPI QR code — auto-generated from your UPI ID" class="pay2-qr-img" draggable="false" /></div>
                 </div>
-                <p class="pay2-qr-instruction">Scan with any UPI app — QR is secondary, button is primary</p>
+                <p class="pay2-qr-instruction">QR auto-generated from <code>config/upi.json</code> — updates when you change your UPI ID</p>
               </div>
               <div id="upi-utr-section" class="pay2-utr-section">
                 <label class="pay2-utr-label" for="utr-input">Paid? Enter your UTR below.</label>
