@@ -311,6 +311,12 @@ app.get('/api/config', async (req, res) => {
   // DEADCV_TEST_MODE — only true in local dev, never in prod/Vercel
   const testMode = TEST_MODE && !IS_PROD;
 
+  // UPI deep link config — read from env, never hardcode real ID in source
+  const upiId = (process.env.UPI_ID || '').trim() || null;
+  const upiMerchantName = (process.env.UPI_MERCHANT_NAME || 'DEADCV').trim();
+  // UPI price is fixed at 96 per spec (from env)
+  const upiPriceFixed = upiPrice;
+
   res.json({
     // Public Razorpay key — safe to expose to frontend
     razorpayKeyId:        razorpayConfigured ? process.env.RAZORPAY_KEY_ID : null,
@@ -322,20 +328,21 @@ app.get('/api/config', async (req, res) => {
     displayPriceUSD: `$${priceUSD}`,
     PRICE_USD: priceUSD,
 
-    // INR equivalent shown to Indian users (live conversion display only)
-    // This does NOT change the underlying $1 price
+    // Live INR equivalent for reference display (does NOT affect UPI charge)
     inrEquiv,
     displayInrEquiv: `₹${inrEquiv}`,
     usdInrRate:      usdInr,
 
-    // Legacy / compat fields for frontend that may use different names
-    displayUpiINR:   `₹${inrEquiv}`,
-    displayPriceINR: `₹${inrEquiv}`,
-    upiPriceInr:     inrEquiv,
-    UPI_PRICE_INR:   inrEquiv,
-    PRICE_INR:       inrEquiv,
-    // Env-configured static fallback (for order verification)
-    upiPriceFallback: upiPrice,
+    // UPI — fixed price per spec, exposed for deep link construction
+    // Frontend builds: upi://pay?pa=UPI_ID&pn=UPI_MERCHANT_NAME&am=96&cu=INR&tr=ORDER_ID
+    upiId,
+    upiMerchantName,
+    upiPriceInr:     upiPriceFixed,
+    displayUpiINR:   `₹${upiPriceFixed}`,
+    displayPriceINR: `₹${upiPriceFixed}`,
+    UPI_PRICE_INR:   upiPriceFixed,
+    PRICE_INR:       upiPriceFixed,
+    upiPriceFallback: upiPriceFixed,
 
     // Test mode — enables TEST PAYMENT → ROAST button in dev only
     testMode,
@@ -651,10 +658,9 @@ app.post('/api/payments/submit-utr', async (req, res) => {
     return res.json({ success: true, message: 'Order already approved.', deadcvOrderId });
   }
 
-  // Use live INR equivalent for display amount (fallback to env UPI_PRICE_INR if FX unavailable)
-  const liveRate   = await getUsdInrRate();
-  const inrDisplay = Math.round(PRICE_USD() * liveRate);
-  const recordedAmount = (inrDisplay || UPI_PRICE_INR()) * 100;
+  // UPI price is fixed at 96 per spec — not live FX
+  const fixedPrice = UPI_PRICE_INR();
+  const recordedAmount = fixedPrice * 100;
 
   updateOrder(deadcvOrderId, o => ({
     ...o,
@@ -664,8 +670,7 @@ app.post('/api/payments/submit-utr', async (req, res) => {
     paymentMethod:    'upi_qr',
     paymentCurrency:  'INR',
     paymentAmount:    recordedAmount,
-    paymentAmountDisplay: `₹${inrDisplay} (≈ $${PRICE_USD()} × ₹${liveRate})`,
-    usdInrRate:       liveRate,
+    paymentAmountDisplay: `₹${fixedPrice}`,
     verificationNote: 'UTR submitted by user — awaiting operator verification',
   }));
 

@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>DEADCV — WE FOUND YOUR CV.</title>
-    <meta name="description" content="We found your resume. That was a mistake. Pay $1 — we'll tell you why. In India $1 ≈ ₹88 via UPI. No account. No bullshit." />
+    <meta name="description" content="We found your resume. That was a mistake. Pay $1 — we'll tell you why. In India $1 ≈ ₹96 via UPI. No account. No bullshit." />
     <meta property="og:title" content="DEADCV — WE FOUND YOUR CV." />
     <meta property="og:description" content="We found your resume. That was a mistake." />
     <meta property="og:type" content="website" />
@@ -47,7 +47,7 @@
                 <span class="g-line g-line--acid" data-hover="YOUR CV.">YOUR <i>CV.</i></span>
               </h1>
               <p class="hero__mistake">that was <em>a mistake.</em></p>
-              <p class="hero__sub">You left it on the internet. We read it. We have notes. One dollar and we tell you why no one replies. <span id="hero-inr-note" style="opacity:.6">In India — $1 ≈ <span id="hero-inr-val">₹88</span> via UPI.</span></p>
+              <p class="hero__sub">You left it on the internet. We read it. We have notes. One dollar and we tell you why no one replies. <span id="hero-inr-note" style="opacity:.6">In India — $1 ≈ <span id="hero-inr-val">₹96</span> via UPI.</span></p>
               <div class="hero__actions">
                 <a href="/upload" class="btn-magnetic" id="hero-cta" data-magnetic>
                   <span class="btn-magnetic__inner">OPEN THE FILE — $1</span>
@@ -124,7 +124,7 @@
           </div>
           <div class="how__steps">
             <div class="how__step"><span>01</span><strong>DROP</strong><p>drag. drop. cry.</p></div>
-            <div class="how__step"><span>02</span><strong>PAY $1</strong><p>less than coffee <em class="inr-equiv">≈ ₹88 UPI</em></p></div>
+            <div class="how__step"><span>02</span><strong>PAY $1</strong><p>less than coffee <em class="inr-equiv">≈ ₹96 UPI</em></p></div>
             <div class="how__step"><span>03</span><strong>WE READ</strong><p>with love (and AI).</p></div>
             <div class="how__step"><span>04</span><strong>WE TELL</strong><p>actual fixes, not quotes.</p></div>
           </div>
@@ -167,7 +167,7 @@
         <section class="final" id="final-cta">
           <div class="final__inner">
             <p>Your resume is out there right now.<br>Recruiters are judging it.<br><em>you just don't know what they're thinking.</em></p>
-            <div class="final__price">$1 <span>· in India ≈ <span class="inr-equiv">₹88</span> UPI</span></div>
+            <div class="final__price">$1 <span>· in India ≈ <span class="inr-equiv">₹96</span> UPI</span></div>
             <a href="/upload" class="btn-magnetic btn-magnetic--huge" id="final-cta-btn" data-magnetic><span class="btn-magnetic__inner">KILL MY CV →</span></a>
             <span class="final__micro">2 min · no account · results you can screenshot</span>
           </div>
@@ -242,7 +242,7 @@
               </div>
               <div class="form-actions">
                 <button type="submit" class="morgue-submit-btn" id="btn-submit-morgue" data-magnetic><span class="btn-magnetic__inner">SEND TO MORGUE →</span></button>
-                <div class="morgue-price-tag"><span class="price-val">$1</span><span class="price-sub">one-time · <span class="inr-equiv">₹88</span> UPI</span></div>
+                <div class="morgue-price-tag"><span class="price-val">$1</span><span class="price-sub">one-time · <span class="inr-equiv">₹96</span> UPI</span></div>
               </div>
               <div class="morgue-loader" id="morgue-loader" style="display: none;">
                 <div class="loader-terminal">
@@ -262,7 +262,7 @@
           <div class="pay__header">
             <span class="kicker">DEADCV / CHECKOUT — FILE <span id="pay2-order-id">DEAD-XXXXX</span></span>
             <h1>READY TO<br><i>GET COOKED?</i></h1>
-            <p>One resume. One roast. $1 everywhere — in India <span class="inr-equiv">≈ ₹88</span> via UPI.</p>
+            <p>One resume. One roast. $1 everywhere — in India <span class="inr-equiv">≈ ₹96</span> via UPI.</p>
           </div>
 
           <div id="pay2-init-loading" class="pay2-init-state">
@@ -297,14 +297,21 @@
 
             <div class="pay__door pay__door--upi" id="door-upi">
               <div class="pay__eyebrow">🇮🇳 PAY WITH UPI — INDIA</div>
-              <div class="pay__price" id="upi-price-display">₹88</div>
-              <div class="pay__sub">$1 ≈ <span id="upi-inr-note">₹88</span> · one-time · UPI QR</div>
+              <div class="pay__price" id="upi-price-display">₹96</div>
+              <div class="pay__sub">$1 ≈ <span id="upi-inr-note">₹96</span> · one-time · UPI</div>
+
+              <!-- Primary: UPI deep link button (fixed ₹96, encoded) -->
+              <button id="btn-upi-pay" class="pay__cta pay__cta--upi" data-magnetic><span class="btn-magnetic__inner">PAY ₹96 WITH UPI →</span></button>
+              <div id="upi-fallback-msg" style="display:none; font-family:var(--mono); font-size:11px; text-align:center; background:var(--acid); color:var(--ink); border:1px solid var(--ink); padding:8px; margin-top:6px;">Open this page on your phone to pay with UPI.</div>
+              <div id="upi-link-debug" style="display:none; font-family:var(--mono); font-size:10px; opacity:.5; margin-top:6px; word-break:break-all;"></div>
+
+              <div style="text-align:center; font-family:var(--mono); font-size:10px; letter-spacing:.1em; opacity:.4; margin:10px 0 6px;">— OR SCAN QR ON DESKTOP —</div>
               <div id="upi-qr-section">
                 <div class="pay2-qr-frame">
                   <div class="pay2-qr-corner pay2-qr-corner--tl"></div><div class="pay2-qr-corner pay2-qr-corner--tr"></div><div class="pay2-qr-corner pay2-qr-corner--bl"></div><div class="pay2-qr-corner pay2-qr-corner--br"></div>
                   <div class="pay2-qr-inner"><img src="/payment/upi-qr.png" alt="UPI QR code — scan with any UPI app to pay" class="pay2-qr-img" draggable="false" /></div>
                 </div>
-                <p class="pay2-qr-instruction">Scan with any UPI app — do not generate another QR</p>
+                <p class="pay2-qr-instruction">Scan with any UPI app — QR is secondary, button is primary</p>
               </div>
               <div id="upi-utr-section" class="pay2-utr-section">
                 <label class="pay2-utr-label" for="utr-input">Paid? Enter your UTR below.</label>
@@ -469,7 +476,7 @@
       <!-- OWNER -->
       <main id="view-owner" class="page-view" style="display: none;">
         <div class="owner-page-container">
-          <div class="owner-header"><div class="owner-tag">[ RESTRICTED AREA // OPERATOR ONLY ]</div><h1 class="owner-title">MORGUE OPERATOR</h1><p class="owner-sub">verify incoming $1 (≈ ₹88) UPI payments & admit corpses to the roast queue.</p></div>
+          <div class="owner-header"><div class="owner-tag">[ RESTRICTED AREA // OPERATOR ONLY ]</div><h1 class="owner-title">MORGUE OPERATOR</h1><p class="owner-sub">verify incoming $1 (≈ ₹96) UPI payments & admit corpses to the roast queue.</p></div>
           <div id="owner-auth-box" class="owner-auth-box"><div class="auth-card"><div class="auth-title">ENTER OPERATOR SECRET</div><p class="auth-sub">Default from .env (<code>deadcv666</code>)</p><form id="owner-auth-form" class="auth-form"><input type="password" id="owner-secret-input" class="morgue-input" placeholder="operator secret..." value="deadcv666" required /><button type="submit" class="owner-auth-btn">UNLOCK MORGUE REGISTRY →</button></form></div></div>
           <div id="owner-dashboard" class="owner-dashboard" style="display: none;">
             <div class="dashboard-controls"><div class="filter-group"><span class="filter-label">STATUS FILTER:</span><button class="filter-btn active" data-filter="all">ALL</button><button class="filter-btn" data-filter="pending_verification">PENDING UTR</button><button class="filter-btn" data-filter="approved">APPROVED</button><button class="filter-btn" data-filter="rejected">REJECTED</button></div><button id="btn-refresh-orders" class="refresh-btn">⟳ REFRESH</button></div>
@@ -478,7 +485,7 @@
         </div>
       </main>
 
-      <main id="view-terms" class="page-view legal-page" style="display: none;"><div class="legal-container"><div class="legal-breadcrumb">DEADCV / TERMS</div><h1 class="legal-title">Terms & Conditions</h1><p class="legal-updated">Last updated: August 2026</p><div class="legal-body"><h2>1. The Service</h2><p>DEADCV is an AI-powered resume autopsy. You upload a resume, pay $1, get a brutally specific letter. For entertainment and education.</p><h2>2. Payment</h2><p>The global fee is <strong>$1 USD</strong> everywhere. In India ≈ ₹88 via UPI QR (live USD→INR). One-time, non-recurring. Razorpay handles cards.</p><h2>3. No Guarantees</h2><p>No job guarantees. The roast is an opinion.</p><h2>4. Privacy</h2><p>We store extracted text temporarily to roast. See <a href="/privacy">Privacy</a>.</p><h2>5. Refunds</h2><p>See <a href="/refund">Refund</a>. Once roast generated, generally not refundable.</p><h2>6. Acceptable Use</h2><p>Don't upload others' data without consent.</p><h2>7. Governing Law</h2><p>Laws of India.</p><h2>8. Contact</h2><p><a href="/contact">Contact us</a>.</p></div></div></main>
+      <main id="view-terms" class="page-view legal-page" style="display: none;"><div class="legal-container"><div class="legal-breadcrumb">DEADCV / TERMS</div><h1 class="legal-title">Terms & Conditions</h1><p class="legal-updated">Last updated: August 2026</p><div class="legal-body"><h2>1. The Service</h2><p>DEADCV is an AI-powered resume autopsy. You upload a resume, pay $1, get a brutally specific letter. For entertainment and education.</p><h2>2. Payment</h2><p>The global fee is <strong>$1 USD</strong> everywhere. In India ≈ ₹96 via UPI QR (live USD→INR). One-time, non-recurring. Razorpay handles cards.</p><h2>3. No Guarantees</h2><p>No job guarantees. The roast is an opinion.</p><h2>4. Privacy</h2><p>We store extracted text temporarily to roast. See <a href="/privacy">Privacy</a>.</p><h2>5. Refunds</h2><p>See <a href="/refund">Refund</a>. Once roast generated, generally not refundable.</p><h2>6. Acceptable Use</h2><p>Don't upload others' data without consent.</p><h2>7. Governing Law</h2><p>Laws of India.</p><h2>8. Contact</h2><p><a href="/contact">Contact us</a>.</p></div></div></main>
       <main id="view-privacy" class="page-view legal-page" style="display: none;"><div class="legal-container"><div class="legal-breadcrumb">DEADCV / PRIVACY</div><h1 class="legal-title">Privacy Policy</h1><p class="legal-updated">Last updated: August 2026</p><div class="legal-body"><h2>What We Collect</h2><p>Extracted resume text, target job, order ID. No card data — Razorpay handles it. No tracking cookies.</p><h2>What We Do NOT Collect</h2><ul><li>We don't sell or publish your resume.</li><li>No email required unless you contact us.</li></ul><h2>How We Use</h2><p>Solely to generate your roast. Stored against order ID for retrieval.</p><h2>Data Retention</h2><p>Order records retained operationally. Request deletion via contact.</p><h2>Third Parties</h2><ul><li><strong>Razorpay</strong> — payments.</li><li><strong>Google Gemini</strong> — roast generation.</li></ul></div></div></main>
       <main id="view-refund" class="page-view legal-page" style="display: none;"><div class="legal-container"><div class="legal-breadcrumb">DEADCV / REFUND</div><h1 class="legal-title">Refund & Cancellation Policy</h1><p class="legal-updated">Last updated: August 2026</p><div class="legal-body"><h2>One-Time Digital Service</h2><p>Once payment confirmed and roast generated, service delivered.</p><h2>Refund Eligibility</h2><p>Refunds if charged but roast never generated due to our failure, or charged twice. Not if you didn't like the roast.</p><h2>How to Request</h2><p>Contact us with Order ID. Response in 2 business days.</p><h2>Cancellation</h2><p>Cancel before completing payment = not charged.</p></div></div></main>
       <main id="view-contact" class="page-view legal-page" style="display: none;"><div class="legal-container"><div class="legal-breadcrumb">DEADCV / CONTACT</div><h1 class="legal-title">Contact</h1><div class="legal-body"><h2>Get in Touch</h2><p>For payment, refunds, questions:</p><div class="contact-card"><div class="contact-row"><span class="contact-label">&gt; Email:</span><a href="mailto:deadcv@deadcv.com" class="contact-val">deadcv@deadcv.com</a></div><div class="contact-row"><span class="contact-label">&gt; Response time:</span><span class="contact-val">24–48h</span></div></div><p>Include your Order ID.</p></div></div></main>

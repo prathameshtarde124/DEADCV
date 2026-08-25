@@ -557,23 +557,33 @@ async function initPaymentPage() {
     return;
   }
 
-  // Update price labels from server values — single global $1, INR is live conversion
-  // Do this before razorpay check so INR is always visible even when Razorpay not configured
+  // Update price labels — $1 global, ₹96 fixed for UPI per spec
   const intlPriceEl = document.getElementById('intl-price-display');
   const upiPriceEl  = document.getElementById('upi-price-display');
   const upiInrNote  = document.getElementById('upi-inr-note');
   const intlBtnLbl  = document.getElementById('btn-intl-label');
   const priceUSD    = config.displayPriceUSD || '$1';
-  const inrDisplay  = config.displayInrEquiv || config.displayUpiINR || `₹${config.inrEquiv || 88}`;
+  // UPI price is fixed 96 from env (never auto-converted)
+  const upiPriceFixed = config.upiPriceInr ?? config.UPI_PRICE_INR ?? config.upiPriceFallback ?? 96;
+  const upiDisplayFixed = `₹${upiPriceFixed}`;
+  const inrLiveDisplay = config.displayInrEquiv || `₹${config.inrEquiv || 96}`;
+  // Show fixed for UPI door, live for hero reference (both currently 96)
   if (intlPriceEl) intlPriceEl.textContent = priceUSD;
-  if (upiPriceEl)  upiPriceEl.textContent  = inrDisplay;
-  if (upiInrNote)  upiInrNote.textContent  = inrDisplay;
+  if (upiPriceEl)  upiPriceEl.textContent  = upiDisplayFixed;
+  if (upiInrNote)  upiInrNote.textContent  = upiDisplayFixed;
   if (intlBtnLbl)  intlBtnLbl.textContent  = `PAY ${priceUSD} & GET COOKED →`;
+  // Update all generic inr-equiv spans to fixed 96 (per spec)
   document.querySelectorAll('.inr-equiv, #hero-inr-val').forEach(el => {
-    el.textContent = inrDisplay;
+    el.textContent = upiDisplayFixed;
   });
   const heroNote = document.getElementById('hero-inr-note');
   if (heroNote) heroNote.style.display = '';
+  // Update UPI button label to fixed price
+  const upiBtnLabel = document.querySelector('#btn-upi-pay .btn-magnetic__inner') || document.getElementById('btn-upi-pay');
+  if (upiBtnLabel && upiBtnLabel.textContent.includes('PAY')) {
+    // will be set to PAY ₹96 WITH UPI → (keep as is, but ensure 96)
+    upiBtnLabel.textContent = `PAY ${upiDisplayFixed} WITH UPI →`;
+  }
 
   // ── TEST MODE (dev only) — show TEST PAYMENT → ROAST bypass ──
   const testBox = document.getElementById('test-mode-box');
@@ -609,6 +619,62 @@ async function initPaymentPage() {
     }
   } else {
     if (testBox) testBox.style.display = 'none';
+  }
+
+  // ── UPI DEEP LINK — primary India payment (₹96 fixed, NOT QR) ──────
+  // Spec: upi://pay?pa=UPI_ID&pn=UPI_MERCHANT_NAME&am=96&cu=INR&tr=ORDER_ID (all encoded)
+  // Never hardcode UPI ID in source — read from config (env)
+  const upiBtn = document.getElementById('btn-upi-pay');
+  const upiFallback = document.getElementById('upi-fallback-msg');
+  const upiQrSection = document.getElementById('upi-qr-section');
+  const upiId = (config.upiId || '').trim();
+  const upiMerchant = (config.upiMerchantName || 'DEADCV').trim();
+  // Keep QR as secondary for desktop, but button is primary
+  if (upiQrSection) upiQrSection.style.display = '';
+  if (upiFallback) upiFallback.style.display = 'none';
+  if (upiBtn && !upiBtn.dataset.hasListener) {
+    upiBtn.dataset.hasListener = 'true';
+    if (!upiId) {
+      upiBtn.disabled = true;
+      upiBtn.style.opacity = '0.6';
+      upiBtn.title = 'UPI not configured — use QR or contact operator';
+      if (upiFallback) {
+        upiFallback.textContent = 'UPI not configured on server. Please use QR or contact support.';
+        upiFallback.style.display = 'block';
+      }
+    } else {
+      upiBtn.addEventListener('click', () => {
+        const pa = encodeURIComponent(upiId);
+        const pn = encodeURIComponent(upiMerchant);
+        const am = encodeURIComponent(String(upiPriceFixed));
+        const cu = encodeURIComponent('INR');
+        const tr = encodeURIComponent(_checkoutOrderId);
+        // tn is optional but helpful — add note
+        const tn = encodeURIComponent('DEADCV Resume Roast');
+        const upiLink = `upi://pay?pa=${pa}&pn=${pn}&am=${am}&cu=${cu}&tr=${tr}&tn=${tn}`;
+        console.log('[UPI] opening', upiLink);
+        // Do NOT auto-mark payment — user must confirm in UPI app, then submit UTR
+        const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+        if (!isMobile && upiFallback) {
+          upiFallback.textContent = 'Open this page on your phone to pay with UPI.';
+          upiFallback.style.display = 'block';
+        }
+        try {
+          window.location.href = upiLink;
+        } catch (e) {
+          console.warn('[UPI] open failed', e);
+        }
+        setTimeout(() => {
+          if (document.visibilityState === 'visible' && upiFallback && upiFallback.style.display === 'none') {
+            if (!document.hidden) {
+              upiFallback.textContent = 'Open this page on your phone to pay with UPI.';
+              upiFallback.style.display = 'block';
+            }
+          }
+        }, 1200);
+        playCursedBeep(660, 'sine', 0.08, 0.04);
+      });
+    }
   }
 
   // If Razorpay not configured and not in test mode, show error but still reveal UPI door
